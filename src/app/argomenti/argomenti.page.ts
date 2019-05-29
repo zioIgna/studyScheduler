@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { UnitComponent } from '../unit/unit.component';
+import { Unit } from '../unit.model';
+import { ActionSheetController, ModalController } from '@ionic/angular';
+import { ManagementService } from '../management.service';
+import { NewBookComponent } from '../new-book/new-book.component';
 
 @Component({
   selector: 'app-argomenti',
@@ -7,34 +10,53 @@ import { UnitComponent } from '../unit/unit.component';
   styleUrls: ['./argomenti.page.scss'],
 })
 export class ArgomentiPage implements OnInit {
-  private unitList: UnitComponent[] = [
-    {
-      title: 'prima unita',
-      chapterFrom: 'capitolo 1.1',
-      chapterTo: 'capitolo 1.2',
-      appuntamenti: [
-        new Date("2019-05-12"),
-        new Date('2019-05-13'),
-        new Date('2019-05-16'),
-        new Date('2019-05-23')
-      ]
-    },
-    {
-      title: 'seconda unita',
-      chapterFrom: 'capitolo 1.3',
-      chapterTo: 'capitolo 1.5',
-      appuntamenti: [
-        new Date("2019-05-14"),
-        new Date('2019-05-15'),
-        new Date('2019-05-18'),
-        new Date('2019-05-25')
-      ]
-    }
-  ];
+  private unitList: Unit[];
 
-  constructor() { }
+  constructor(private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private managementSrv: ManagementService) { }
+
+  onShowConsole() {
+    console.log('Bottone cliccato!');
+  }
+
+  onAddBook() {
+    this.modalCtrl.create({
+      component: NewBookComponent
+    }).then(modalEl => {
+      modalEl.present();
+      return modalEl.onDidDismiss();
+    });
+    console.log('Aggiunto libro');
+    // this.managementSrv.books.push({
+    //   autore: "nuovo arrivato",
+    //   pagine: 40,
+    //   titolo: "un titolo a caso"
+    // });
+    // console.log('questi sono i libri:', this.managementSrv.books);
+    // console.log('questa è la mia proprieta: ', this.managementSrv.myProp);
+  }
+
+  onAddUnita() {
+    this.actionSheetCtrl.create({
+      header: 'Choose an action',
+      buttons: [
+        {
+          text: 'Riferimenti capitoli/paragrafi',
+          handler: () => {
+            console.log('non faccio niente');
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    }).then(actionSheetEl => {
+      actionSheetEl.present();
+    });
+  }
 
   ngOnInit() {
+    this.unitList = this.managementSrv.unitlist;
   }
 
 }

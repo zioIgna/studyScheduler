@@ -1,9 +1,64 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header color="primary">
+  <ion-toolbar color="primary">
     <ion-title>argomenti</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-list>
+    <ion-card *ngFor="let unit of unitList">
+      <ion-item>
+        <ion-icon slot="start" name="bookmark"></ion-icon>
+        <ion-label>{{unit.title}}</ion-label>
+      </ion-item>
+      <ion-card-content>
+        <p *ngFor="let date of unit.appuntamenti">{{ date.giorno | date: 'dd/mm/yyyy' }}, {{date.status }}
+          <ion-badge slot="end"
+            [color]="date.status == 'DUE' ? 'secondary' : date.status == 'OVERDUE' ? 'danger' : 'primary'">.</ion-badge>
+        </p>
+        <!-- <p *ngFor="let date of unit.appuntamenti">{{  }}</p> -->
+        <!-- {{unit.appuntamenti[0].giorno | date: 'dd/mm/yyyy'}}
+        {{unit.appuntamenti[0].status}} -->
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="onShowConsole()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab> -->
+
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+
+    <ion-fab-list side="top">
+      <ion-fab-button>
+        <ion-icon name="book" color="secondary" (click)="onAddBook()"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button>
+        <ion-icon name="bookmark" color="primary" (click)="onAddUnita()"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+
+    <!-- <ion-fab-list side="start">
+      <ion-fab-button>Vimeo</ion-fab-button>
+    </ion-fab-list> -->
+
+  </ion-fab>
+
+  <!-- <ion-card>
+    <ion-item>
+      <ion-icon name="pin" slot="start"></ion-icon>
+      <ion-label>ion-item in a card, icon left, button right</ion-label>
+      <ion-button fill="outline" slot="end">View</ion-button>
+    </ion-item>
+
+    <ion-card-content>
+      This is content, without any paragraph or header tags,
+      within an ion-card-content element.
+    </ion-card-content>
+  </ion-card> -->
 </ion-content>
