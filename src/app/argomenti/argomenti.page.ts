@@ -55,6 +55,10 @@ export class ArgomentiPage implements OnInit {
     });
   }
 
+  onSwitchStatus(){
+    console.log('bottone cliccato!');
+  }
+
   ngOnInit() {
     this.unitList = this.managementSrv.unitlist;
   }

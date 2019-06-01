@@ -11,7 +11,7 @@ export class NewBookComponent implements OnInit {
 
   constructor(private managementSrv: ManagementService) { }
 
-  onAddBook(form: NgForm){
+  onCreateBook(form: NgForm){
     this.managementSrv.addBook(form);
   }
 

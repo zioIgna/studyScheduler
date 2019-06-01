@@ -10,9 +10,10 @@
       <ion-item>
         <ion-icon slot="start" name="bookmark"></ion-icon>
         <ion-label>{{unit.title}}</ion-label>
+        <ion-label text-right>{{unit.createdOn | date: 'dd/mm/yyyy'}}</ion-label>
       </ion-item>
       <ion-card-content>
-        <p *ngFor="let date of unit.appuntamenti">{{ date.giorno | date: 'dd/mm/yyyy' }}, {{date.status }}
+        <p *ngFor="let date of unit.appuntamenti" (click)="onSwitchStatus()">{{ date.giorno | date: 'dd/mm/yyyy' }}, {{date.status }}
           <ion-badge slot="end"
             [color]="date.status == 'DUE' ? 'secondary' : date.status == 'OVERDUE' ? 'danger' : 'primary'">.</ion-badge>
         </p>
