@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Unit } from '../unit.model';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { ManagementService } from '../management.service';
 import { NewBookComponent } from '../new-book/new-book.component';
+import { NewUnitComponent } from '../new-unit/new-unit.component';
+import { UnitComponent } from '../unit/unit.component';
 
 @Component({
   selector: 'app-argomenti',
@@ -10,7 +11,7 @@ import { NewBookComponent } from '../new-book/new-book.component';
   styleUrls: ['./argomenti.page.scss'],
 })
 export class ArgomentiPage implements OnInit {
-  private unitList: Unit[];
+  private unitList: UnitComponent[];
 
   constructor(private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private managementSrv: ManagementService) { }
 
@@ -36,23 +37,29 @@ export class ArgomentiPage implements OnInit {
   }
 
   onAddUnita() {
-    this.actionSheetCtrl.create({
-      header: 'Choose an action',
-      buttons: [
-        {
-          text: 'Riferimenti capitoli/paragrafi',
-          handler: () => {
-            console.log('non faccio niente');
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        }
-      ]
-    }).then(actionSheetEl => {
-      actionSheetEl.present();
+    this.modalCtrl.create({
+      component: NewUnitComponent
+    }).then(modalEl =>{
+      modalEl.present();
+      return modalEl.onDidDismiss();
     });
+    // this.actionSheetCtrl.create({
+    //   header: 'Choose an action',
+    //   buttons: [
+    //     {
+    //       text: 'Riferimenti capitoli/paragrafi',
+    //       handler: () => {
+    //         console.log('non faccio niente');
+    //       }
+    //     },
+    //     {
+    //       text: 'Cancel',
+    //       role: 'cancel'
+    //     }
+    //   ]
+    // }).then(actionSheetEl => {
+    //   actionSheetEl.present();
+    // });
   }
 
   onSwitchStatus(){

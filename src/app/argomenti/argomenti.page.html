@@ -7,13 +7,25 @@
 <ion-content>
   <ion-list>
     <ion-card *ngFor="let unit of unitList">
+      <ion-card-header>
+        <ion-card-subtitle>
+          <ion-label style="float:left">{{unit.title}} </ion-label>
+          <ion-label style="float:right">{{unit.createdOn | date}}</ion-label>
+        </ion-card-subtitle>
+      </ion-card-header>
       <ion-item>
         <ion-icon slot="start" name="bookmark"></ion-icon>
-        <ion-label>{{unit.title}}</ion-label>
-        <ion-label text-right>{{unit.createdOn | date: 'dd/mm/yyyy'}}</ion-label>
+        <!-- <ion-label>{{unit.chapterFrom}}</ion-label>
+        <ion-label>{{unit.chapterTo}}</ion-label> -->
+        <!-- <p><i>da: </i></p> -->
+        <ion-label><i>da </i><b>{{unit.chapterFrom}}</b><i> a </i><b>{{unit.chapterTo}}</b></ion-label>
+        <!-- <p> {{unit.chapterFrom}}</p>
+        <p><i>a: </i></p>
+        <p> {{unit.chapterTo}}</p> -->
       </ion-item>
       <ion-card-content>
-        <p *ngFor="let date of unit.appuntamenti" (click)="onSwitchStatus()">{{ date.giorno | date: 'dd/mm/yyyy' }}, {{date.status }}
+        <p *ngFor="let date of unit.appuntamenti" (click)="onSwitchStatus()">{{ date.giorno | date }},
+          {{date.status }}
           <ion-badge slot="end"
             [color]="date.status == 'DUE' ? 'secondary' : date.status == 'OVERDUE' ? 'danger' : 'primary'">.</ion-badge>
         </p>
@@ -24,13 +36,7 @@
     </ion-card>
   </ion-list>
 
-  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="onShowConsole()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-fab> -->
-
-  <ion-fab vertical="bottom" horizontal="end">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
@@ -43,23 +49,5 @@
         <ion-icon name="bookmark" color="primary" (click)="onAddUnita()"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
-
-    <!-- <ion-fab-list side="start">
-      <ion-fab-button>Vimeo</ion-fab-button>
-    </ion-fab-list> -->
-
   </ion-fab>
-
-  <!-- <ion-card>
-    <ion-item>
-      <ion-icon name="pin" slot="start"></ion-icon>
-      <ion-label>ion-item in a card, icon left, button right</ion-label>
-      <ion-button fill="outline" slot="end">View</ion-button>
-    </ion-item>
-
-    <ion-card-content>
-      This is content, without any paragraph or header tags,
-      within an ion-card-content element.
-    </ion-card-content>
-  </ion-card> -->
 </ion-content>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ManagementService } from '../management.service';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-new-book',
@@ -9,10 +10,11 @@ import { ManagementService } from '../management.service';
 })
 export class NewBookComponent implements OnInit {
 
-  constructor(private managementSrv: ManagementService) { }
+  constructor(private managementSrv: ManagementService, private modalCtrl: ModalController) { }
 
   onCreateBook(form: NgForm){
     this.managementSrv.addBook(form);
+    this.modalCtrl.dismiss();
   }
 
   ngOnInit() {}
