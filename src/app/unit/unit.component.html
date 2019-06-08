@@ -1,3 +1,19 @@
-<p>
-  unit works!
-</p>
+<!-- <ion-card>
+  <ion-card-header>
+    <ion-card-subtitle>
+      <ion-label style="float:left">{{unit.title}} </ion-label>
+      <ion-label style="float:right">{{unit.createdOn | date}}</ion-label>
+    </ion-card-subtitle>
+  </ion-card-header>
+  <ion-item>
+    <ion-icon slot="start" name="bookmark"></ion-icon>
+    <ion-label><i>da </i><b>{{unit.chapterFrom}}</b><i> a </i><b>{{unit.chapterTo}}</b></ion-label>
+  </ion-item>
+  <ion-card-content>
+    <p *ngFor="let date of unit.appuntamenti" (click)="onSwitchStatus()">{{ date.giorno | date }},
+      {{date.status }}
+      <ion-badge slot="end"
+        [color]="date.status == 'DUE' ? 'secondary' : date.status == 'OVERDUE' ? 'danger' : 'primary'">.</ion-badge>
+    </p>
+  </ion-card-content>
+</ion-card> -->

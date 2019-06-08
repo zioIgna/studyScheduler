@@ -11,6 +11,8 @@ export class UnitComponent implements OnInit {
 
   today = myGlobals.today;
   public nextDate: Scadenza;
+  public pastDates: Scadenza[];
+  public overdueDates: boolean;
 
   constructor(
     public title: string,
@@ -23,8 +25,22 @@ export class UnitComponent implements OnInit {
     this.nextDate = this.appuntamenti.find(appuntamento => {
       return appuntamento.giorno.getTime() - this.today.getTime() >= 0;
     });
+    // this.pastDates.splice(0, 0, ...(appuntamenti.filter(app => {
+    //   return app.giorno.getTime() < this.today.getTime();
+    //   console.log('app.giorno.getTime() è: ', app.giorno.getTime());
+    //   console.log('i pastDates sono: ', this.pastDates);
+    // })));
+    this.pastDates = appuntamenti.filter(app => 
+      // console.log('app.giorno.getTime() = ', app.giorno.getTime());
+      app.giorno.getTime() < new Date().getTime()
+    );
+    console.log('pastDates ora sono: ', this.pastDates);
+    this.overdueDates = (this.pastDates.findIndex(date => {
+      return date.status == 'OVERDUE'
+    }) >= 0);
     console.log('nel constructor gli appuntamenti sono: ', appuntamenti);
     console.log('nextDate = ', this.nextDate);
+    console.log('overdueDates è: ', this.overdueDates);
 
   }
 
