@@ -7,6 +7,7 @@ const routes: Routes = [
   { path: 'argomenti', loadChildren: './argomenti/argomenti.module#ArgomentiPageModule' },
   { path: 'calendario', loadChildren: './calendario/calendario.module#CalendarioPageModule' },
   { path: 'navigation', loadChildren: './navigation/navigation.module#NavigationPageModule' },
+  { path: 'unit-detail', loadChildren: './unit-detail/unit-detail.module#UnitDetailPageModule' },
 ];
 
 @NgModule({

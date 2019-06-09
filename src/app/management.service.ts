@@ -30,7 +30,7 @@ export class ManagementService {
   ]
 
   unitlist: UnitComponent[] = [
-    new UnitComponent('prima unita','primo libro', 'capitolo 1.1', 'capitolo 1.2', new Date(), [
+    new UnitComponent('prima unita', 'primo libro', 'capitolo 1.1', 'capitolo 1.2', new Date(), [
       new Scadenza(
         new Date("2019-05-12"),
         DeadlineStatus.Done
@@ -48,7 +48,7 @@ export class ManagementService {
         DeadlineStatus.Due
       )
     ]),
-    new UnitComponent('seconda unita', 'secondo libro','capitolo 1.3', 'capitolo 1.5', new Date(), [
+    new UnitComponent('seconda unita', 'secondo libro', 'capitolo 1.3', 'capitolo 1.5', new Date(), [
       new Scadenza(
         new Date("2019-05-14"),
         DeadlineStatus.Overdue
@@ -66,7 +66,7 @@ export class ManagementService {
         DeadlineStatus.Due
       )
     ]),
-    new UnitComponent('terza unita','terzo libro', 'capitolo 1.6', 'capitolo 1.8', new Date(), [
+    new UnitComponent('terza unita', 'terzo libro', 'capitolo 1.6', 'capitolo 1.8', new Date(), [
       new Scadenza(
         new Date("2019-05-18"),
         DeadlineStatus.Overdue
@@ -160,7 +160,7 @@ export class ManagementService {
   constructor(private modalCtrl: ModalController) { }
 
   public get books(): Book[] {
-    return  this._books;
+    return this._books;
   }
 
   addBook(form: NgForm) {
@@ -177,11 +177,11 @@ export class ManagementService {
   addUnit(form: NgForm) {
     const today = new Date();
     console.log('today is: ', today);
-    const in2days = new Date(today.getTime()+1000*60*60*24*2);
-    const add5days = new Date(in2days.getTime()+1000*60*60*24*5);
-    const add7days = new Date(add5days.getTime()+1000*60*60*24*7);
-    const add13days = new Date(add7days.getTime()+1000*60*60*24*13);
-    const add20days = new Date(add13days.getTime()+1000*60*60*24*20);
+    const in2days = new Date(today.getTime() + 1000 * 60 * 60 * 24 * 2);
+    const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
+    const add7days = new Date(add5days.getTime() + 1000 * 60 * 60 * 24 * 7);
+    const add13days = new Date(add7days.getTime() + 1000 * 60 * 60 * 24 * 13);
+    const add20days = new Date(add13days.getTime() + 1000 * 60 * 60 * 24 * 20);
     // const appuntamenti: Date[] = [in2days, add5days, add7days, add13days, add20days];
     const myUnit = new UnitComponent(
       form.value.riferimenti,
@@ -201,4 +201,11 @@ export class ManagementService {
     // this.modalCtrl.dismiss();
     console.log('le units ora sono: ', this.unitlist);
   }
+
+  getUnit(unitName: string) {
+    return this.unitlist.find(unit => {
+      return unit.title == unitName;
+    })
+  }
+
 }

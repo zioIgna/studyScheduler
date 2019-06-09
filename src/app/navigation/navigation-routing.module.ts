@@ -17,6 +17,10 @@ const routes: Routes = [
                             {
                                 path: '',
                                 loadChildren: '../argomenti/argomenti.module#ArgomentiPageModule'
+                            },
+                            {
+                                path: ':unitName',
+                                loadChildren: '../unit-detail/unit-detail.module#UnitDetailPageModule'
                             }
                         ]
                 },
