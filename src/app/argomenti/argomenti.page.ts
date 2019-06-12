@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { ManagementService } from '../management.service';
 import { NewBookComponent } from '../new-book/new-book.component';
 import { NewUnitComponent } from '../new-unit/new-unit.component';
 import { UnitComponent } from '../unit/unit.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-argomenti',
   templateUrl: './argomenti.page.html',
   styleUrls: ['./argomenti.page.scss'],
 })
-export class ArgomentiPage implements OnInit {
+export class ArgomentiPage implements OnInit, OnDestroy {
   private unitList: UnitComponent[];
+  private unitsSub: Subscription;
 
   constructor(private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private managementSrv: ManagementService) { }
 
@@ -39,7 +41,7 @@ export class ArgomentiPage implements OnInit {
   onAddUnita() {
     this.modalCtrl.create({
       component: NewUnitComponent
-    }).then(modalEl =>{
+    }).then(modalEl => {
       modalEl.present();
       return modalEl.onDidDismiss();
     });
@@ -62,12 +64,21 @@ export class ArgomentiPage implements OnInit {
     // });
   }
 
-  onSwitchStatus(){
+  onSwitchStatus() {
     console.log('bottone cliccato!');
   }
 
   ngOnInit() {
-    this.unitList = this.managementSrv.unitlist;
+    this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
+      this.unitList = units;
+    })
+    // this.unitList = this.managementSrv.unitlist;
+  }
+
+  ngOnDestroy() {
+    if (this.unitsSub) {
+      this.unitsSub.unsubscribe();
+    }
   }
 
 }

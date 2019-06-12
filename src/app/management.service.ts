@@ -5,6 +5,8 @@ import { NgForm } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 import { Book } from './Book';
 import { UnitComponent } from './unit/unit.component';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { take, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +31,7 @@ export class ManagementService {
     },
   ]
 
-  unitlist: UnitComponent[] = [
+  private _unitlist = new BehaviorSubject<UnitComponent[]>([
     new UnitComponent('prima unita', 'primo libro', 'capitolo 1.1', 'capitolo 1.2', new Date(), [
       new Scadenza(
         new Date("2019-05-12"),
@@ -153,7 +155,11 @@ export class ManagementService {
     //     )
     //   ]
     // }
-  ];
+  ]);
+
+  get unitlist() {
+    return this._unitlist.asObservable();
+  }
 
   myProp = 'miaProprieta';
 
@@ -197,14 +203,35 @@ export class ManagementService {
         new Scadenza(add20days, DeadlineStatus.Due)
       ]
     );
-    this.unitlist.push(myUnit);
+    this.unitlist.pipe(take(1)).subscribe(units => {
+      this._unitlist.next(units.concat(myUnit));
+    });
+    // this.unitlist.push(myUnit);
     // this.modalCtrl.dismiss();
     console.log('le units ora sono: ', this.unitlist);
   }
 
   getUnit(unitName: string) {
-    return this.unitlist.find(unit => {
-      return unit.title == unitName;
+    return this.unitlist.pipe(
+      take(1),
+      map(units => {
+        return { ...units.find(unit => unit.title == unitName) };
+      })
+    )
+    // return this.unitlist.find(unit => {
+    //   return unit.title == unitName;
+    // })
+  }
+
+  updateUnit(myUnit: UnitComponent) {
+    this.unitlist.pipe(take(1)).subscribe(units => {
+      let newUnits = units.filter(unit => unit.title != myUnit.title);
+      newUnits = newUnits.concat(myUnit);
+      this._unitlist.next(newUnits);
+      // console.log('ora la unitlist aggiornata è: ', newUnits);
+      this.unitlist.pipe(take(1)).subscribe(units => {
+        console.log('ora la unitlist aggiornata è: ', units);
+      });
     })
   }
 

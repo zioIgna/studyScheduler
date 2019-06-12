@@ -7,7 +7,7 @@ import * as myGlobals from '../globals';
   templateUrl: './unit.component.html',
   styleUrls: ['./unit.component.scss'],
 })
-export class UnitComponent implements OnInit {
+export class UnitComponent {
 
   today = myGlobals.today;
   public nextDate: Scadenza;
@@ -44,7 +44,7 @@ export class UnitComponent implements OnInit {
 
   }
 
-  ngOnInit() {
+  // ngOnInit() {
     // this.nextDate = this.appuntamenti.find(appuntamento => {
     //   return appuntamento.giorno.getTime() - this.today.getTime() >= 0;
     // });
@@ -55,6 +55,6 @@ export class UnitComponent implements OnInit {
     // } else {
     //   console.log('non si passa per la creazione di una unita');
     // }
-  }
+  // }
 
 }
