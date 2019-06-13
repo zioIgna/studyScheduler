@@ -22,6 +22,7 @@
         <ion-label><i>da </i><b>{{unit?.chapterFrom}}</b><i> a </i><b>{{unit?.chapterTo}}</b></ion-label>
       </ion-item>
       <ion-card-content>
+        <ion-label text-center>{{unit.libro}}</ion-label>
         <p *ngIf="unit?.nextDate">nextDate: {{unit?.nextDate.giorno | date}}</p>
         <!-- <div *ngIf="unit.nextDate == undefined"> -->
           <p *ngFor="let date of unit.appuntamenti" (click)="onSwitchStatus(date.giorno)">{{ date.giorno | date }},

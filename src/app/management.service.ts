@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { Scadenza } from './scadenza.model';
 import { DeadlineStatus } from './deadlineStatus.model';
 import { NgForm } from '@angular/forms';
@@ -7,11 +7,23 @@ import { Book } from './Book';
 import { UnitComponent } from './unit/unit.component';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take, map } from 'rxjs/operators';
+import { UnitDetailPage } from './unit-detail/unit-detail.page';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ManagementService {
+export class ManagementService implements OnInit {
+  ngOnInit(): void {
+    this.sortUnitList();
+  }
+
+  sortUnitList() {
+    this.unitlist.pipe(take(1)).subscribe(units => {
+      this._unitlist.next(units.sort((unitA, unitB) =>
+        unitA.createdOn > unitB.createdOn ? -1 : 1
+      ))
+    });
+  }
 
   private _books: Book[] = [
     {
@@ -208,6 +220,7 @@ export class ManagementService {
     });
     // this.unitlist.push(myUnit);
     // this.modalCtrl.dismiss();
+    this.sortUnitList();
     console.log('le units ora sono: ', this.unitlist);
   }
 
@@ -230,6 +243,7 @@ export class ManagementService {
       this._unitlist.next(newUnits);
       // console.log('ora la unitlist aggiornata è: ', newUnits);
       this.unitlist.pipe(take(1)).subscribe(units => {
+        this.sortUnitList();
         console.log('ora la unitlist aggiornata è: ', units);
       });
     })
