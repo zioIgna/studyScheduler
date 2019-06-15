@@ -13,6 +13,7 @@ export class UnitComponent {
   public nextDate: Scadenza;
   public pastDates: Scadenza[];
   public overdueDates: boolean;
+  public id: string;
 
   constructor(
     public title: string,

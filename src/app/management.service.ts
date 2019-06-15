@@ -6,8 +6,8 @@ import { ModalController } from '@ionic/angular';
 import { Book } from './Book';
 import { UnitComponent } from './unit/unit.component';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { take, map } from 'rxjs/operators';
-import { UnitDetailPage } from './unit-detail/unit-detail.page';
+import { take, map, tap, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -175,7 +175,7 @@ export class ManagementService implements OnInit {
 
   myProp = 'miaProprieta';
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor(private modalCtrl: ModalController, private http: HttpClient) { }
 
   public get books(): Book[] {
     return this._books;
@@ -193,6 +193,7 @@ export class ManagementService implements OnInit {
   }
 
   addUnit(form: NgForm) {
+    let generatedId: string;
     const today = new Date();
     console.log('today is: ', today);
     const in2days = new Date(today.getTime() + 1000 * 60 * 60 * 24 * 2);
@@ -201,7 +202,7 @@ export class ManagementService implements OnInit {
     const add13days = new Date(add7days.getTime() + 1000 * 60 * 60 * 24 * 13);
     const add20days = new Date(add13days.getTime() + 1000 * 60 * 60 * 24 * 20);
     // const appuntamenti: Date[] = [in2days, add5days, add7days, add13days, add20days];
-    const myUnit = new UnitComponent(
+    let myUnit = new UnitComponent(
       form.value.riferimenti,
       form.value.libro,
       form.value.chapterFrom,
@@ -215,9 +216,29 @@ export class ManagementService implements OnInit {
         new Scadenza(add20days, DeadlineStatus.Due)
       ]
     );
-    this.unitlist.pipe(take(1)).subscribe(units => {
-      this._unitlist.next(units.concat(myUnit));
-    });
+    this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/units.json', myUnit)
+      .pipe(
+        switchMap(res => {
+          generatedId = res.name;
+          myUnit.id = generatedId;
+          console.log('ho ottenuto: ', res);
+          return this.unitlist
+        }),
+        take(1)
+        // tap(units => {
+        //   myUnit.id = generatedId;
+        //   this._unitlist.next(units.concat(myUnit));
+        // })
+      )
+      .subscribe(res => {
+        console.log('ora sì ho ottenuto: ', res);
+        this._unitlist.next(res.concat(myUnit));
+        console.log('ora myUnit è: ', myUnit);
+      });
+    // this.unitlist.pipe(take(1)).subscribe(units => {
+    //   this._unitlist.next(units.concat(myUnit));
+    // });
+
     // this.unitlist.push(myUnit);
     // this.modalCtrl.dismiss();
     this.sortUnitList();

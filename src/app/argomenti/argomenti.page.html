@@ -10,8 +10,11 @@
       <ion-card-header>
         <ion-card-subtitle>
           <ion-label style="float:left">{{unit.title}}
-             <ion-badge *ngIf="unit.pastDates != undefined" [color]="unit.overdueDates ? 'danger' : 'primary' " ><ion-icon [name]="unit.overdueDates ? 'close' : 'checkmark'"></ion-icon></ion-badge> 
-            </ion-label>
+            <!-- <ion-badge *ngIf="unit.pastDates != undefined" [color]="unit.overdueDates ? 'danger' : 'primary' "> -->
+            <ion-badge *ngIf="unit?.pastDates != undefined" [color]="unit?.overdueDates ? 'danger' : unit?.nextDate == undefined ? 'primary' : 'secondary' ">
+              <ion-icon [name]="unit.overdueDates ? 'close' : 'checkmark'"></ion-icon>
+            </ion-badge>
+          </ion-label>
           <ion-label style="float:right">{{unit.createdOn | date}}</ion-label>
         </ion-card-subtitle>
       </ion-card-header>
@@ -20,6 +23,7 @@
         <ion-label><i>da </i><b>{{unit.chapterFrom}}</b><i> a </i><b>{{unit.chapterTo}}</b></ion-label>
       </ion-item>
       <ion-card-content>
+        <ion-label class="ion-text-center ion-text-uppercase"><h2><b>{{unit.libro}}</b></h2></ion-label>
         <p *ngIf="unit.nextDate">nextDate: {{unit.nextDate?.giorno | date}}</p>
         <div *ngIf="unit.nextDate == undefined">
           <!-- <p *ngFor="let date of unit.appuntamenti" (click)="onSwitchStatus()">{{ date.giorno | date }},
