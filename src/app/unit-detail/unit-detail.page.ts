@@ -27,7 +27,7 @@ export class UnitDetailPage implements OnInit, OnDestroy {
     let index = this.unit.appuntamenti.findIndex(app => app.giorno == giorno);
     let myApp = this.unit.appuntamenti[index];
     let myStatus = myApp.status;
-    if (myApp.giorno.getTime() <= new Date().getTime()) {
+    if (new Date(myApp.giorno).getTime() <= new Date().getTime()) {
       if (myStatus == DeadlineStatus.Overdue) {
         // myStatus = DeadlineStatus.Done;
         console.log('lo status è overdue');

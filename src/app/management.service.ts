@@ -8,11 +8,27 @@ import { UnitComponent } from './unit/unit.component';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take, map, tap, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import { Title } from '@angular/platform-browser';
+import { today } from './globals';
+
+interface unitsData {
+  appuntamenti: Scadenza[];
+  chapterFrom: string;
+  chapterTo: string;
+  createdOn: string;
+  libro: string;
+  nextDate: Scadenza;
+  overdueDates: boolean;
+  title: string;
+  today: string;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class ManagementService implements OnInit {
+
+
   ngOnInit(): void {
     this.sortUnitList();
   }
@@ -43,131 +59,7 @@ export class ManagementService implements OnInit {
     },
   ]
 
-  private _unitlist = new BehaviorSubject<UnitComponent[]>([
-    new UnitComponent('prima unita', 'primo libro', 'capitolo 1.1', 'capitolo 1.2', new Date(), [
-      new Scadenza(
-        new Date("2019-05-12"),
-        DeadlineStatus.Done
-      ),
-      new Scadenza(
-        new Date('2019-05-13'),
-        DeadlineStatus.Done
-      ),
-      new Scadenza(
-        new Date('2019-05-16'),
-        DeadlineStatus.Due
-      ),
-      new Scadenza(
-        new Date('2019-05-23'),
-        DeadlineStatus.Due
-      )
-    ]),
-    new UnitComponent('seconda unita', 'secondo libro', 'capitolo 1.3', 'capitolo 1.5', new Date(), [
-      new Scadenza(
-        new Date("2019-05-14"),
-        DeadlineStatus.Overdue
-      ),
-      new Scadenza(
-        new Date('2019-05-15'),
-        DeadlineStatus.Overdue
-      ),
-      new Scadenza(
-        new Date('2019-05-18'),
-        DeadlineStatus.Done
-      ),
-      new Scadenza(
-        new Date('2019-05-25'),
-        DeadlineStatus.Due
-      )
-    ]),
-    new UnitComponent('terza unita', 'terzo libro', 'capitolo 1.6', 'capitolo 1.8', new Date(), [
-      new Scadenza(
-        new Date("2019-05-18"),
-        DeadlineStatus.Overdue
-      ),
-      new Scadenza(
-        new Date('2019-05-19'),
-        DeadlineStatus.Overdue
-      ),
-      new Scadenza(
-        new Date('2019-05-22'),
-        DeadlineStatus.Done
-      ),
-      new Scadenza(
-        new Date('2019-05-29'),
-        DeadlineStatus.Due
-      )
-    ])
-    // {
-    //   title: 'prima unita',
-    //   chapterFrom: 'capitolo 1.1',
-    //   chapterTo: 'capitolo 1.2',
-    //   appuntamenti: [
-    //     new Scadenza(
-    //       new Date("2019-05-12"),
-    //       DeadlineStatus.Done
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-13'),
-    //       DeadlineStatus.Done
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-16'),
-    //       DeadlineStatus.Due
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-23'),
-    //       DeadlineStatus.Due
-    //     )
-    //   ]
-    // },
-    // {
-    //   title: 'seconda unita',
-    //   chapterFrom: 'capitolo 1.3',
-    //   chapterTo: 'capitolo 1.5',
-    //   appuntamenti: [
-    //     new Scadenza(
-    //       new Date("2019-05-14"),
-    //       DeadlineStatus.Overdue
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-15'),
-    //       DeadlineStatus.Overdue
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-18'),
-    //       DeadlineStatus.Done
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-25'),
-    //       DeadlineStatus.Due
-    //     )
-    //   ]
-    // },
-    // {
-    //   title: 'terza unita',
-    //   chapterFrom: 'capitolo 1.6',
-    //   chapterTo: 'capitolo 1.8',
-    //   appuntamenti: [
-    //     new Scadenza(
-    //       new Date("2019-05-18"),
-    //       DeadlineStatus.Overdue
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-19'),
-    //       DeadlineStatus.Overdue
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-22'),
-    //       DeadlineStatus.Done
-    //     ),
-    //     new Scadenza(
-    //       new Date('2019-05-29'),
-    //       DeadlineStatus.Due
-    //     )
-    //   ]
-    // }
-  ]);
+  private _unitlist = new BehaviorSubject<UnitComponent[]>([]);
 
   get unitlist() {
     return this._unitlist.asObservable();
@@ -203,6 +95,7 @@ export class ManagementService implements OnInit {
     const add20days = new Date(add13days.getTime() + 1000 * 60 * 60 * 24 * 20);
     // const appuntamenti: Date[] = [in2days, add5days, add7days, add13days, add20days];
     let myUnit = new UnitComponent(
+      null,
       form.value.riferimenti,
       form.value.libro,
       form.value.chapterFrom,
@@ -216,7 +109,7 @@ export class ManagementService implements OnInit {
         new Scadenza(add20days, DeadlineStatus.Due)
       ]
     );
-    this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/units.json', myUnit)
+    return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/units.json', myUnit)
       .pipe(
         switchMap(res => {
           generatedId = res.name;
@@ -245,6 +138,41 @@ export class ManagementService implements OnInit {
     console.log('le units ora sono: ', this.unitlist);
   }
 
+  fetchUnits() {
+    return this.http.get<{ [key: string]: unitsData }>('https://study-planner-e6035.firebaseio.com/units.json')
+      .pipe(
+        // tap(resData => {
+        //   console.log('queste sono le units nel database: ', resData);
+        //   return resData;
+        // }),
+        map(resData => {
+          let units = [];
+          for (const key in resData) {
+            if (resData.hasOwnProperty(key)) {
+              let myAppuntamenti: Scadenza[] = [];
+              // for(let appuntamento of resData.key.appuntamenti){
+              //   myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));
+              // }
+              units.push(new UnitComponent(
+                key,
+                resData[key].title,
+                resData[key].libro,
+                resData[key].chapterFrom,
+                resData[key].chapterTo,
+                new Date(resData[key].createdOn),
+                resData[key].appuntamenti
+                // myAppuntamenti
+              ))
+            }
+          }
+          return units;
+        }),
+        tap(units => { 
+          this._unitlist.next(units);
+        })
+      );
+  }
+
   getUnit(unitName: string) {
     return this.unitlist.pipe(
       take(1),
@@ -269,5 +197,131 @@ export class ManagementService implements OnInit {
       });
     })
   }
+
+  
+  // [new UnitComponent('id1', 'prima unita', 'primo libro', 'capitolo 1.1', 'capitolo 1.2', new Date(), [
+  //   new Scadenza(
+  //     new Date("2019-05-12"),
+  //     DeadlineStatus.Done
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-13'),
+  //     DeadlineStatus.Done
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-16'),
+  //     DeadlineStatus.Due
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-23'),
+  //     DeadlineStatus.Due
+  //   )
+  // ]),
+  // new UnitComponent('id2', 'seconda unita', 'secondo libro', 'capitolo 1.3', 'capitolo 1.5', new Date(), [
+  //   new Scadenza(
+  //     new Date("2019-05-14"),
+  //     DeadlineStatus.Overdue
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-15'),
+  //     DeadlineStatus.Overdue
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-18'),
+  //     DeadlineStatus.Done
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-25'),
+  //     DeadlineStatus.Due
+  //   )
+  // ]),
+  // new UnitComponent('id3', 'terza unita', 'terzo libro', 'capitolo 1.6', 'capitolo 1.8', new Date(), [
+  //   new Scadenza(
+  //     new Date("2019-05-18"),
+  //     DeadlineStatus.Overdue
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-19'),
+  //     DeadlineStatus.Overdue
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-22'),
+  //     DeadlineStatus.Done
+  //   ),
+  //   new Scadenza(
+  //     new Date('2019-05-29'),
+  //     DeadlineStatus.Due
+  //   )
+  // ])
+  // {
+  //   title: 'prima unita',
+  //   chapterFrom: 'capitolo 1.1',
+  //   chapterTo: 'capitolo 1.2',
+  //   appuntamenti: [
+  //     new Scadenza(
+  //       new Date("2019-05-12"),
+  //       DeadlineStatus.Done
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-13'),
+  //       DeadlineStatus.Done
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-16'),
+  //       DeadlineStatus.Due
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-23'),
+  //       DeadlineStatus.Due
+  //     )
+  //   ]
+  // },
+  // {
+  //   title: 'seconda unita',
+  //   chapterFrom: 'capitolo 1.3',
+  //   chapterTo: 'capitolo 1.5',
+  //   appuntamenti: [
+  //     new Scadenza(
+  //       new Date("2019-05-14"),
+  //       DeadlineStatus.Overdue
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-15'),
+  //       DeadlineStatus.Overdue
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-18'),
+  //       DeadlineStatus.Done
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-25'),
+  //       DeadlineStatus.Due
+  //     )
+  //   ]
+  // },
+  // {
+  //   title: 'terza unita',
+  //   chapterFrom: 'capitolo 1.6',
+  //   chapterTo: 'capitolo 1.8',
+  //   appuntamenti: [
+  //     new Scadenza(
+  //       new Date("2019-05-18"),
+  //       DeadlineStatus.Overdue
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-19'),
+  //       DeadlineStatus.Overdue
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-22'),
+  //       DeadlineStatus.Done
+  //     ),
+  //     new Scadenza(
+  //       new Date('2019-05-29'),
+  //       DeadlineStatus.Due
+  //     )
+  //   ]
+  // }
+// ]
 
 }

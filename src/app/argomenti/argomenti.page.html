@@ -24,16 +24,16 @@
       </ion-item>
       <ion-card-content>
         <ion-label class="ion-text-center ion-text-uppercase"><h2><b>{{unit.libro}}</b></h2></ion-label>
-        <p *ngIf="unit.nextDate">nextDate: {{unit.nextDate?.giorno | date}}</p>
-        <div *ngIf="unit.nextDate == undefined">
+        <p *ngIf="unit?.nextDate">nextDate: {{unit.nextDate?.giorno | date}}</p>
+        <div *ngIf="unit?.nextDate == undefined">
           <!-- <p *ngFor="let date of unit.appuntamenti" (click)="onSwitchStatus()">{{ date.giorno | date }},
             {{date.status }}
             <ion-badge slot="end"
               [color]="date.status == 'DUE' ? 'secondary' : date.status == 'OVERDUE' ? 'danger' : 'primary'">.
             </ion-badge>
           </p> -->
-          <p *ngIf="unit.overdueDates">You have one or more overdue dates pending...</p>
-          <p *ngIf="!unit.overdueDates">Task completed!</p>
+          <p *ngIf="unit?.overdueDates">You have one or more overdue dates pending...</p>
+          <p *ngIf="!unit?.overdueDates">Task completed!</p>
         </div>
       </ion-card-content>
     </ion-card>
