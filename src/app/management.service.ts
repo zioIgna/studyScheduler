@@ -5,7 +5,7 @@ import { NgForm } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 import { Book } from './Book';
 import { UnitComponent } from './unit/unit.component';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { take, map, tap, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
@@ -146,13 +146,16 @@ export class ManagementService implements OnInit {
         //   return resData;
         // }),
         map(resData => {
-          let units = [];
+          let units: UnitComponent[] = [];
           for (const key in resData) {
             if (resData.hasOwnProperty(key)) {
               let myAppuntamenti: Scadenza[] = [];
-              // for(let appuntamento of resData.key.appuntamenti){
-              //   myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));
-              // }
+              for (let appuntamento of resData[key].appuntamenti) {
+                if (new Date(appuntamento.giorno).getTime() < new Date().getTime() && appuntamento.status == 'DUE') {
+                  appuntamento.status = DeadlineStatus.Overdue;
+                }
+                myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));
+              }
               units.push(new UnitComponent(
                 key,
                 resData[key].title,
@@ -160,14 +163,15 @@ export class ManagementService implements OnInit {
                 resData[key].chapterFrom,
                 resData[key].chapterTo,
                 new Date(resData[key].createdOn),
-                resData[key].appuntamenti
-                // myAppuntamenti
+                // resData[key].appuntamenti
+                myAppuntamenti
               ))
             }
           }
           return units;
         }),
-        tap(units => { 
+        tap(units => {
+          console.log('sto inviando le units dopo il fetch: ', units);
           this._unitlist.next(units);
         })
       );
@@ -186,9 +190,48 @@ export class ManagementService implements OnInit {
   }
 
   updateUnit(myUnit: UnitComponent) {
+    let updatedUnits: UnitComponent[];
+    return this.unitlist.pipe(
+      // take(1),
+      // switchMap(units => {
+      //   if (!units || units.length == 0) {
+      //     return this.fetchUnits();
+      //   } else {
+      //     return of(units);
+      //   }
+      // }),
+      take(1),
+      switchMap(units => {
+        const updatedUnitIndex = units.findIndex(un => un.id === myUnit.id);
+        updatedUnits = [...units];
+        const oldUnit = updatedUnits[updatedUnitIndex];
+        // updatedUnits[updatedUnitIndex] = myUnit;
+        updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti);
+        return this.http.put(`https://study-planner-e6035.firebaseio.com/units/${myUnit.id}.json`,
+          { ...myUnit, id: null }
+        );
+      }),
+      tap((res) => {
+        console.log('la risposta dopo lo update è: ', res);
+        this._unitlist.next(updatedUnits);
+      })
+    );
+
+    // this.http.put(`https://study-planner-e6035.firebaseio.com/units/${myUnit.id}.json`,
+    //   { ...myUnit, id: null }
+    // ).pipe(
+    //   tap(() =>{
+    //     let newUnits = units.filter(unit => unit.id != myUnit.id);
+    //   })
+
+    // ).subscribe(units =>{
+
+    // });
+
     this.unitlist.pipe(take(1)).subscribe(units => {
-      let newUnits = units.filter(unit => unit.title != myUnit.title);
-      newUnits = newUnits.concat(myUnit);
+      let newUnits = units.filter(unit => unit.id != myUnit.id);
+      // newUnits = newUnits.concat(myUnit);
+      newUnits.push(myUnit);
       this._unitlist.next(newUnits);
       // console.log('ora la unitlist aggiornata è: ', newUnits);
       this.unitlist.pipe(take(1)).subscribe(units => {
@@ -198,7 +241,7 @@ export class ManagementService implements OnInit {
     })
   }
 
-  
+
   // [new UnitComponent('id1', 'prima unita', 'primo libro', 'capitolo 1.1', 'capitolo 1.2', new Date(), [
   //   new Scadenza(
   //     new Date("2019-05-12"),
@@ -322,6 +365,6 @@ export class ManagementService implements OnInit {
   //     )
   //   ]
   // }
-// ]
+  // ]
 
 }

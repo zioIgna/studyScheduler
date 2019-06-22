@@ -5,6 +5,7 @@ import { NewBookComponent } from '../new-book/new-book.component';
 import { NewUnitComponent } from '../new-unit/new-unit.component';
 import { UnitComponent } from '../unit/unit.component';
 import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators/';
 
 @Component({
   selector: 'app-argomenti',
@@ -71,7 +72,7 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.unitsSub = this.managementSrv.fetchUnits().subscribe(units => {
+    this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
       let futureUnits = units.filter(unit => unit.nextDate != undefined);
       futureUnits.sort((unitA, unitB) => (unitA.nextDate < unitB.nextDate ? 1 : -1));
       this.pastDatesUnits = units.filter(unit => unit.nextDate == undefined);
@@ -81,10 +82,25 @@ export class ArgomentiPage implements OnInit, OnDestroy {
       this.unitList = units;
     })
 
+    // this.unitsSub = this.managementSrv.fetchUnits().subscribe(units => {
+    //   let futureUnits = units.filter(unit => unit.nextDate != undefined);
+    //   futureUnits.sort((unitA, unitB) => (unitA.nextDate < unitB.nextDate ? 1 : -1));
+    //   this.pastDatesUnits = units.filter(unit => unit.nextDate == undefined);
+    //   this.pastDatesUnits.sort((unitA, unitB) => (unitA.appuntamenti[unitA.appuntamenti.length - 1].giorno > unitB.appuntamenti[unitB.appuntamenti.length - 1].giorno) ? -1 : 1);
+    //   console.log('futureUnits ordinati sono: ', futureUnits);
+    //   console.log('pastDatesUnits ordinati sono: ', this.pastDatesUnits);
+    //   this.unitList = units;
+    // })
+
     // this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
     // })
 
     // this.unitList = this.managementSrv.unitlist;
+  }
+
+  ionViewWillEnter() {
+    this.managementSrv.fetchUnits().
+      subscribe();
   }
 
   ngOnDestroy() {

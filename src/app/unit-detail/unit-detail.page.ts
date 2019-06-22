@@ -48,7 +48,7 @@ export class UnitDetailPage implements OnInit, OnDestroy {
       } else {
         this.unit.overdueDates = false;
       };
-      this.managementSrv.updateUnit(this.unit);
+      this.managementSrv.updateUnit(this.unit).subscribe();
       console.log('dopo switchstatus, la unit è: ', this.unit);
     }
   }
