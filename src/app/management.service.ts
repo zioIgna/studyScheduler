@@ -5,23 +5,25 @@ import { NgForm } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 import { Book } from './Book';
 import { UnitComponent } from './unit/unit.component';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, from } from 'rxjs';
 import { take, map, tap, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 import { today } from './globals';
+import { UnitsData } from './units-data';
 
-interface unitsData {
-  appuntamenti: Scadenza[];
-  chapterFrom: string;
-  chapterTo: string;
-  createdOn: string;
-  libro: string;
-  nextDate: Scadenza;
-  overdueDates: boolean;
-  title: string;
-  today: string;
-};
+
+// interface unitsData {
+//   appuntamenti: Scadenza[];
+//   chapterFrom: string;
+//   chapterTo: string;
+//   createdOn: string;
+//   libro: string;
+//   nextDate: Scadenza;
+//   overdueDates: boolean;
+//   title: string;
+//   today: string;
+// };
 
 @Injectable({
   providedIn: 'root'
@@ -86,7 +88,7 @@ export class ManagementService implements OnInit {
 
   addUnit(form: NgForm) {
     let generatedId: string;
-    const today = new Date();
+    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
     console.log('today is: ', today);
     const in2days = new Date(today.getTime() + 1000 * 60 * 60 * 24 * 2);
     const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
@@ -139,19 +141,22 @@ export class ManagementService implements OnInit {
   }
 
   fetchUnits() {
-    return this.http.get<{ [key: string]: unitsData }>('https://study-planner-e6035.firebaseio.com/units.json')
+    return this.http.get<{ [key: string]: UnitsData }>('https://study-planner-e6035.firebaseio.com/units.json')
       .pipe(
         // tap(resData => {
         //   console.log('queste sono le units nel database: ', resData);
         //   return resData;
         // }),
+        take(1),
         map(resData => {
           let units: UnitComponent[] = [];
           for (const key in resData) {
             if (resData.hasOwnProperty(key)) {
               let myAppuntamenti: Scadenza[] = [];
               for (let appuntamento of resData[key].appuntamenti) {
-                if (new Date(appuntamento.giorno).getTime() < new Date().getTime() && appuntamento.status == 'DUE') {
+                let today = new Date();
+                if (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getDate(), today.getMonth(), today.getDate()) < 0) {
+                  // if (new Date(appuntamento.giorno).getTime() < new Date().getTime() && appuntamento.status == 'DUE') {
                   appuntamento.status = DeadlineStatus.Overdue;
                 }
                 myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));
@@ -202,6 +207,7 @@ export class ManagementService implements OnInit {
       // }),
       take(1),
       switchMap(units => {
+        console.log('queste sono le units ricevute allo updateUnit: ', units);
         const updatedUnitIndex = units.findIndex(un => un.id === myUnit.id);
         updatedUnits = [...units];
         const oldUnit = updatedUnits[updatedUnitIndex];

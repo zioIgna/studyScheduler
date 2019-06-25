@@ -4,6 +4,8 @@ import { ManagementService } from '../management.service';
 import { ActivatedRoute } from '@angular/router';
 import { DeadlineStatus } from '../deadlineStatus.model';
 import { Subscription, Subject } from 'rxjs';
+import { UnitsData } from '../units-data';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-unit-detail',
@@ -17,7 +19,7 @@ export class UnitDetailPage implements OnInit, OnDestroy {
   // private _unit = new Subject<UnitComponent>();
   private unitSubscription: Subscription;
 
-  constructor(private managementSrv: ManagementService, private route: ActivatedRoute) {
+  constructor(private managementSrv: ManagementService, private route: ActivatedRoute, private http: HttpClient) {
     // private route: ActivatedRouteSnapshot;
 
   }
@@ -27,7 +29,8 @@ export class UnitDetailPage implements OnInit, OnDestroy {
     let index = this.unit.appuntamenti.findIndex(app => app.giorno == giorno);
     let myApp = this.unit.appuntamenti[index];
     let myStatus = myApp.status;
-    if (new Date(myApp.giorno).getTime() <= new Date().getTime()) {
+    if (this.pastDate(new Date(myApp.giorno))) {
+      // if (new Date(myApp.giorno).getTime() <= new Date().getTime()) {
       if (myStatus == DeadlineStatus.Overdue) {
         // myStatus = DeadlineStatus.Done;
         console.log('lo status è overdue');
@@ -40,17 +43,47 @@ export class UnitDetailPage implements OnInit, OnDestroy {
       }
       // myStatus = myStatus == 'OVERDUE' ? DeadlineStatus.Done : DeadlineStatus.Overdue;
       // console.log('myStatus = ', myStatus);
-      if (this.unit.pastDates.findIndex(pastDate => {
-        console.log('questo pastDate è: ', pastDate);
-        return pastDate.status == DeadlineStatus.Overdue;
-      }) > -1){
-        this.unit.overdueDates = true;
-      } else {
-        this.unit.overdueDates = false;
-      };
-      this.managementSrv.updateUnit(this.unit).subscribe();
+      // if (this.unit.pastDates.findIndex(pastDate => {
+      //   console.log('questo pastDate è: ', pastDate);
+      //   return pastDate.status == DeadlineStatus.Overdue;
+      // }) > -1) {
+      //   this.unit.overdueDates = true;
+      // } else {
+      //   this.unit.overdueDates = false;
+      // };
+      this.managementSrv.updateUnit(this.unit).subscribe((res: UnitsData) => {
+        this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti);
+      });
       console.log('dopo switchstatus, la unit è: ', this.unit);
+    } else if (this.sameDay(new Date(myApp.giorno))) {
+      console.log('è lo stesso giorno');
+      if (myStatus == DeadlineStatus.Due) {
+        myApp.status = DeadlineStatus.Done;
+      } else {
+        myApp.status = DeadlineStatus.Due;
+      }
+      console.log('sto passando questa unit allo update: ', this.unit);
+      this.managementSrv.updateUnit(this.unit).subscribe((res: UnitsData) => {
+        this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti);
+      });
     }
+  }
+
+  pastDate(date1: Date): boolean {
+    let today = new Date();
+    let newDate1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    let newDate2 = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    return (newDate1 - newDate2) < 0;
+    // var ms = Math.abs(newDate1 - newDate2);
+    // return Math.floor(ms / 1000 / 60 / 60 / 24) == 0;
+  }
+
+  sameDay(date1: Date): boolean {
+    let today = new Date();
+    let newDate1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    let newDate2 = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    var ms = Math.abs(newDate1 - newDate2);
+    return Math.floor(ms / 1000 / 60 / 60 / 24) == 0;
   }
 
   ngOnInit() {

@@ -67,19 +67,23 @@ export class ArgomentiPage implements OnInit, OnDestroy {
     // });
   }
 
-  onSwitchStatus() {
-    console.log('bottone cliccato!');
-  }
-
   ngOnInit() {
+    this.managementSrv.fetchUnits().subscribe(newUnits => {
+      for (let singleUnit of newUnits) {
+        this.managementSrv.updateUnit(singleUnit).subscribe();
+      }
+    });
     this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
       let futureUnits = units.filter(unit => unit.nextDate != undefined);
-      futureUnits.sort((unitA, unitB) => (unitA.nextDate < unitB.nextDate ? 1 : -1));
+      console.log('ora le futureUnits non ordinate sono: ', futureUnits);
+      futureUnits.sort((unitA, unitB) => (new Date(unitA.nextDate.giorno) < new Date(unitB.nextDate.giorno) ? -1 : 1));
+      console.log('ora le futureUnits ordinate sono: ', futureUnits);
       this.pastDatesUnits = units.filter(unit => unit.nextDate == undefined);
       this.pastDatesUnits.sort((unitA, unitB) => (unitA.appuntamenti[unitA.appuntamenti.length - 1].giorno > unitB.appuntamenti[unitB.appuntamenti.length - 1].giorno) ? -1 : 1);
       console.log('futureUnits ordinati sono: ', futureUnits);
       console.log('pastDatesUnits ordinati sono: ', this.pastDatesUnits);
-      this.unitList = units;
+      // this.unitList = units;
+      this.unitList = [...futureUnits, ...this.pastDatesUnits];
     })
 
     // this.unitsSub = this.managementSrv.fetchUnits().subscribe(units => {
@@ -98,10 +102,10 @@ export class ArgomentiPage implements OnInit, OnDestroy {
     // this.unitList = this.managementSrv.unitlist;
   }
 
-  ionViewWillEnter() {
-    this.managementSrv.fetchUnits().
-      subscribe();
-  }
+  // ionViewWillEnter() {
+  //   this.managementSrv.fetchUnits().
+  //     subscribe();
+  // }
 
   ngOnDestroy() {
     if (this.unitsSub) {
