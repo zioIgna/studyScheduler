@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 import { today } from './globals';
 import { UnitsData } from './units-data';
+import { IBookData } from './ibook-data';
 
 
 // interface unitsData {
@@ -43,23 +44,28 @@ export class ManagementService implements OnInit {
     });
   }
 
-  private _books: Book[] = [
-    {
-      titolo: 'libro di matematica',
-      autore: 'un pazzo',
-      pagine: 210
-    },
-    {
-      titolo: 'libro di storia',
-      autore: 'lucio',
-      pagine: 144
-    },
-    {
-      titolo: 'libro di geografia',
-      autore: 'marco',
-      pagine: 320
-    },
-  ]
+  private _books = new BehaviorSubject<Book[]>([]);
+
+  get books() {
+    return this._books.asObservable();
+  }
+  // private _books: Book[] = [
+  //   {
+  //     titolo: 'libro di matematica',
+  //     autore: 'un pazzo',
+  //     pagine: 210
+  //   },
+  //   {
+  //     titolo: 'libro di storia',
+  //     autore: 'lucio',
+  //     pagine: 144
+  //   },
+  //   {
+  //     titolo: 'libro di geografia',
+  //     autore: 'marco',
+  //     pagine: 320
+  //   },
+  // ]
 
   private _unitlist = new BehaviorSubject<UnitComponent[]>([]);
 
@@ -71,19 +77,59 @@ export class ManagementService implements OnInit {
 
   constructor(private modalCtrl: ModalController, private http: HttpClient) { }
 
-  public get books(): Book[] {
-    return this._books;
-  }
+  // public get books(): Book[] {
+  //   return this._books;
+  // }
 
   addBook(form: NgForm) {
+    let generatedBookId: string;
     const myBook: Book = {
+      id: null,
       titolo: form.value.title,
       autore: form.value.autore,
       pagine: form.value.pagine
     };
-    this._books.push(myBook);
-    // this.modalCtrl.dismiss();
-    console.log('questi sono i books: ', this._books);
+    return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/books.json', myBook)
+      .pipe(
+        switchMap(res => {
+          console.log('alla aggiunta del libro ho ottenuto: ', res);
+          generatedBookId = res.name;
+          return this.books
+        }),
+        take(1)
+      )
+      .subscribe(res => {
+        console.log('nella seconda parte di aggiunta di un libro ho ottenuto: ', res);
+        myBook.id = generatedBookId;
+        this._books.next(res.concat(myBook));
+      });
+    // this._books.push(myBook);
+    // console.log('questi sono i books: ', this._books);
+  }
+
+  fetchBooks() {
+    return this.http.get<{ [key: string]: IBookData }>('https://study-planner-e6035.firebaseio.com/books.json')
+      .pipe(
+        take(1),
+        map(resData => {
+          let books: Book[] = [];
+          for (const key in resData) {
+            if (resData.hasOwnProperty(key)) {
+              books.push({
+                id: key,
+                titolo: resData[key].titolo,
+                autore: resData[key].autore,
+                pagine: resData[key].pagine
+              })
+            }
+          }
+          return books;
+        }),
+        tap(books => {
+          console.log('sto inviando i books dopo il fetch: ', books);
+          this._books.next(books);
+        })
+      )
   }
 
   addUnit(form: NgForm) {
