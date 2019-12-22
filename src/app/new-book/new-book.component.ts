@@ -17,6 +17,10 @@ export class NewBookComponent implements OnInit {
     this.modalCtrl.dismiss();
   }
 
+  onDismiss(){
+    this.modalCtrl.dismiss();
+  }
+
   ngOnInit() {}
 
 }

@@ -33,6 +33,10 @@ export class NewUnitComponent implements OnInit, OnDestroy {
     // console.log('i books nella new-unit component sono: ', this._books);
   }
 
+  onDismiss(){
+    this.modalCtrl.dismiss();
+  }
+
   ngOnDestroy() {
     if (this.booksSub) {
       this.booksSub.unsubscribe();
