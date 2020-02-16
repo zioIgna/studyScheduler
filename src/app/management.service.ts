@@ -5,14 +5,14 @@ import { NgForm } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
 import { Book } from './Book';
 import { UnitComponent } from './unit/unit.component';
-import { BehaviorSubject, Observable, of, from } from 'rxjs';
+import { BehaviorSubject, Observable, of, from, Subscription } from 'rxjs';
 import { take, map, tap, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 import { today } from './globals';
 import { UnitsData } from './units-data';
 import { IBookData } from './ibook-data';
-
+import { AuthenticationService } from './auth/authentication.service';
 
 // interface unitsData {
 //   appuntamenti: Scadenza[];
@@ -31,6 +31,22 @@ import { IBookData } from './ibook-data';
 })
 export class ManagementService implements OnInit {
 
+  constructor(private modalCtrl: ModalController, private http: HttpClient, private authService: AuthenticationService) { }
+
+  private _books = new BehaviorSubject<Book[]>([]);
+  private userId: string;
+
+  get books() {
+    return this._books.asObservable();
+  }
+
+  private _unitlist = new BehaviorSubject<UnitComponent[]>([]);
+
+  get unitlist() {
+    return this._unitlist.asObservable();
+  }
+
+  myProp = 'miaProprieta';
 
   ngOnInit(): void {
     this.sortUnitList();
@@ -44,11 +60,6 @@ export class ManagementService implements OnInit {
     });
   }
 
-  private _books = new BehaviorSubject<Book[]>([]);
-
-  get books() {
-    return this._books.asObservable();
-  }
   // private _books: Book[] = [
   //   {
   //     titolo: 'libro di matematica',
@@ -67,15 +78,7 @@ export class ManagementService implements OnInit {
   //   },
   // ]
 
-  private _unitlist = new BehaviorSubject<UnitComponent[]>([]);
 
-  get unitlist() {
-    return this._unitlist.asObservable();
-  }
-
-  myProp = 'miaProprieta';
-
-  constructor(private modalCtrl: ModalController, private http: HttpClient) { }
 
   // public get books(): Book[] {
   //   return this._books;
@@ -186,8 +189,8 @@ export class ManagementService implements OnInit {
     console.log('le units ora sono: ', this.unitlist);
   }
 
-  fetchUnits() {
-    return this.http.get<{ [key: string]: UnitsData }>('https://study-planner-e6035.firebaseio.com/units.json')
+  fetchUnits(userId: string) {
+    return this.http.get<{ [key: string]: UnitsData }>(`https://study-planner-e6035.firebaseio.com/units.json?auth=${userId}`)
       .pipe(
         // tap(resData => {
         //   console.log('queste sono le units nel database: ', resData);

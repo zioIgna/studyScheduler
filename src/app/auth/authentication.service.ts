@@ -40,6 +40,16 @@ export class AuthenticationService {
     }));
   }
 
+  get userIdToken() {
+    return this._user.asObservable().pipe(map(user => {
+      if (user) {
+        return user.token;
+      } else {
+        return null;
+      }
+    }));
+  }
+
   constructor(private http: HttpClient) { }
 
   signUp(email: string, password: string) {

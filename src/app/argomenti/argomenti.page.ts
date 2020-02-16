@@ -6,6 +6,7 @@ import { NewUnitComponent } from '../new-unit/new-unit.component';
 import { UnitComponent } from '../unit/unit.component';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators/';
+import { AuthenticationService } from '../auth/authentication.service';
 
 @Component({
   selector: 'app-argomenti',
@@ -17,8 +18,10 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   private futureDatesUnits: UnitComponent[];
   private pastDatesUnits: UnitComponent[];
   private unitsSub: Subscription;
+  private userIdTokenSub: Subscription;
+  private userIdToken: string;
 
-  constructor(private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private managementSrv: ManagementService) { }
+  constructor(private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private managementSrv: ManagementService, private authService: AuthenticationService) { }
 
   onShowConsole() {
     console.log('Bottone cliccato!');
@@ -68,10 +71,13 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.managementSrv.fetchUnits().subscribe(newUnits => {
-      for (let singleUnit of newUnits) {
-        this.managementSrv.updateUnit(singleUnit).subscribe();
-      }
+    this.userIdTokenSub = this.authService.userIdToken.pipe(take(1)).subscribe(res => {
+      this.userIdToken = res;
+      this.managementSrv.fetchUnits(this.userIdToken).subscribe(newUnits => {
+        for (let singleUnit of newUnits) {
+          this.managementSrv.updateUnit(singleUnit).subscribe();
+        }
+      });
     });
     this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
       let futureUnits = units.filter(unit => unit.nextDate != undefined);
@@ -110,6 +116,9 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.unitsSub) {
       this.unitsSub.unsubscribe();
+    };
+    if (this.userIdTokenSub) {
+      this.userIdTokenSub.unsubscribe();
     }
   }
 
