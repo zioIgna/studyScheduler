@@ -50,18 +50,22 @@ export class AuthenticationService {
     }));
   }
 
+  get user() {
+    return this._user.asObservable();
+  }
+
   constructor(private http: HttpClient) { }
 
   signUp(email: string, password: string) {
     return this.http.post<AuthResponseData>(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`,
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey_authenticated}`,
       { email: email, password: password, returnSecureToken: true }
     ).pipe(tap(this.setUserData.bind(this)));
   }
 
   login(email: string, password: string) {
     return this.http.post<AuthResponseData>(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.firebaseAPIKey}`,
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.firebaseAPIKey_authenticated}`,
       { email: email, password: password, returnSecureToken: true }
     ).pipe(tap(this.setUserData.bind(this)));
   }

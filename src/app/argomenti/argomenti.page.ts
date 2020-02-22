@@ -7,6 +7,7 @@ import { UnitComponent } from '../unit/unit.component';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators/';
 import { AuthenticationService } from '../auth/authentication.service';
+import { User } from '../auth/user.model';
 
 @Component({
   selector: 'app-argomenti',
@@ -18,10 +19,17 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   private futureDatesUnits: UnitComponent[];
   private pastDatesUnits: UnitComponent[];
   private unitsSub: Subscription;
+  private firstUnitsSub: Subscription;
   private userIdTokenSub: Subscription;
   private userIdToken: string;
+  private user: User;
+  private userSub: Subscription;
 
-  constructor(private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private managementSrv: ManagementService, private authService: AuthenticationService) { }
+  constructor(
+    private modalCtrl: ModalController,
+    private actionSheetCtrl: ActionSheetController,
+    private managementSrv: ManagementService,
+    private authService: AuthenticationService) { }
 
   onShowConsole() {
     console.log('Bottone cliccato!');
@@ -71,14 +79,22 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userIdTokenSub = this.authService.userIdToken.pipe(take(1)).subscribe(res => {
-      this.userIdToken = res;
-      this.managementSrv.fetchUnits(this.userIdToken).subscribe(newUnits => {
+    this.firstUnitsSub = this.authService.user.pipe(take(1)).subscribe(res => {
+      this.user = res;
+      this.userSub = this.managementSrv.fetchUnits(this.user.id, this.user.token).subscribe(newUnits => {
         for (let singleUnit of newUnits) {
           this.managementSrv.updateUnit(singleUnit).subscribe();
         }
-      });
+      })
     });
+    // this.userIdTokenSub = this.authService.userIdToken.pipe(take(1)).subscribe(res => {
+    //   this.userIdToken = res;
+    //   this.managementSrv.fetchUnits(this.userIdToken).subscribe(newUnits => {
+    //     for (let singleUnit of newUnits) {
+    //       this.managementSrv.updateUnit(singleUnit).subscribe();
+    //     }
+    //   });
+    // });
     this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
       let futureUnits = units.filter(unit => unit.nextDate != undefined);
       console.log('ora le futureUnits non ordinate sono: ', futureUnits);
@@ -119,6 +135,9 @@ export class ArgomentiPage implements OnInit, OnDestroy {
     };
     if (this.userIdTokenSub) {
       this.userIdTokenSub.unsubscribe();
+    };
+    if (this.userSub) {
+      this.userSub.unsubscribe();
     }
   }
 

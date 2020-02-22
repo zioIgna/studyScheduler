@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, OnInit, OnDestroy } from '@angular/core';
 import { Scadenza } from './scadenza.model';
 import { DeadlineStatus } from './deadlineStatus.model';
 import { NgForm } from '@angular/forms';
@@ -13,6 +13,7 @@ import { today } from './globals';
 import { UnitsData } from './units-data';
 import { IBookData } from './ibook-data';
 import { AuthenticationService } from './auth/authentication.service';
+import { User } from './auth/user.model';
 
 // interface unitsData {
 //   appuntamenti: Scadenza[];
@@ -29,12 +30,20 @@ import { AuthenticationService } from './auth/authentication.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ManagementService implements OnInit {
+export class ManagementService implements OnInit, OnDestroy {
 
-  constructor(private modalCtrl: ModalController, private http: HttpClient, private authService: AuthenticationService) { }
+  constructor(
+    private modalCtrl: ModalController,
+    private http: HttpClient,
+    private authService: AuthenticationService
+  ) { }
 
   private _books = new BehaviorSubject<Book[]>([]);
-  private userId: string;
+  private _userId: string;
+  private _userToken: string;
+
+  private _user: User;
+  private _userSub: Subscription;
 
   get books() {
     return this._books.asObservable();
@@ -50,6 +59,16 @@ export class ManagementService implements OnInit {
 
   ngOnInit(): void {
     this.sortUnitList();
+    this._userSub = this.authService.user.pipe(take(1)).subscribe(res => {
+      this._user = res;
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this._userSub) {
+      this._userSub.unsubscribe();
+    }
+    // throw new Error("Method not implemented.");
   }
 
   sortUnitList() {
@@ -84,7 +103,15 @@ export class ManagementService implements OnInit {
   //   return this._books;
   // }
 
-  addBook(form: NgForm) {
+  getUserIdOnce() {
+    return this.authService.userId.pipe(take(1));
+  }
+
+  getUserTokenOnce() {
+    return this.authService.userIdToken.pipe(take(1));
+  }
+
+  addBook(form: NgForm, user: User) {
     let generatedBookId: string;
     const myBook: Book = {
       id: null,
@@ -92,7 +119,8 @@ export class ManagementService implements OnInit {
       autore: form.value.autore,
       pagine: form.value.pagine
     };
-    return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/books.json', myBook)
+    // return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/books.json', myBook)
+    return this.http.post<{ name: string }>(`https://study-planner-w-authentication.firebaseio.com/users/${user.id}/books.json?auth=${user.token}`, myBook)
       .pipe(
         switchMap(res => {
           console.log('alla aggiunta del libro ho ottenuto: ', res);
@@ -110,8 +138,8 @@ export class ManagementService implements OnInit {
     // console.log('questi sono i books: ', this._books);
   }
 
-  fetchBooks() {
-    return this.http.get<{ [key: string]: IBookData }>('https://study-planner-e6035.firebaseio.com/books.json')
+  fetchBooks(userId: string, userToken: string) {
+    return this.http.get<{ [key: string]: IBookData }>(`https://study-planner-w-authentication.firebaseio.com/users/${userId}/books.json?auth=${userToken}`)
       .pipe(
         take(1),
         map(resData => {
@@ -133,9 +161,12 @@ export class ManagementService implements OnInit {
           this._books.next(books);
         })
       )
+    // return this.getUserIdOnce().subscribe(res => {
+    //   this.userId = res;
+    // })
   }
 
-  addUnit(form: NgForm) {
+  addUnit(form: NgForm, user: User) {
     let generatedId: string;
     const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
     console.log('today is: ', today);
@@ -160,7 +191,8 @@ export class ManagementService implements OnInit {
         new Scadenza(add20days, DeadlineStatus.Due)
       ]
     );
-    return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/units.json', myUnit)
+    // return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/units.json', myUnit)
+    return this.http.post<{ name: string }>(`https://study-planner-w-authentication.firebaseio.com/users/${user.id}/units.json?auth=${user.token}`, myUnit)
       .pipe(
         switchMap(res => {
           generatedId = res.name;
@@ -189,8 +221,9 @@ export class ManagementService implements OnInit {
     console.log('le units ora sono: ', this.unitlist);
   }
 
-  fetchUnits(userId: string) {
-    return this.http.get<{ [key: string]: UnitsData }>(`https://study-planner-e6035.firebaseio.com/units.json?auth=${userId}`)
+  fetchUnits(userId: string, userToken: string) {
+    // return this.http.get<{ [key: string]: UnitsData }>(`https://study-planner-e6035.firebaseio.com/units.json?auth=${userToken}`)
+    return this.http.get<{ [key: string]: UnitsData }>(`https://study-planner-w-authentication.firebaseio.com/users/${userId}/units.json?auth=${userToken}`)
       .pipe(
         // tap(resData => {
         //   console.log('queste sono le units nel database: ', resData);
@@ -244,6 +277,9 @@ export class ManagementService implements OnInit {
   }
 
   updateUnit(myUnit: UnitComponent) {
+    // return this.getUserTokenOnce().subscribe(res => {
+    //   this._userToken = res;
+    // });
     let updatedUnits: UnitComponent[];
     return this.unitlist.pipe(
       // take(1),
@@ -262,7 +298,8 @@ export class ManagementService implements OnInit {
         const oldUnit = updatedUnits[updatedUnitIndex];
         // updatedUnits[updatedUnitIndex] = myUnit;
         updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti);
-        return this.http.put(`https://study-planner-e6035.firebaseio.com/units/${myUnit.id}.json`,
+        // return this.http.put(`https://study-planner-e6035.firebaseio.com/units/${myUnit.id}.json`,
+        return this.http.put(`https://study-planner-w-authentication.firebaseio.com/users/${this._user.id}/units/${myUnit.id}.json?auth=${this._user.token}`,
           { ...myUnit, id: null }
         );
       }),
