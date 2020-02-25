@@ -83,7 +83,7 @@ export class ArgomentiPage implements OnInit, OnDestroy {
       this.user = res;
       this.userSub = this.managementSrv.fetchUnits(this.user.id, this.user.token).subscribe(newUnits => {
         for (let singleUnit of newUnits) {
-          this.managementSrv.updateUnit(singleUnit).subscribe();
+          this.managementSrv.updateUnit(singleUnit, this.user).subscribe();
         }
       })
     });
