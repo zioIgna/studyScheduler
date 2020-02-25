@@ -276,7 +276,7 @@ export class ManagementService implements OnInit, OnDestroy {
     // })
   }
 
-  updateUnit(myUnit: UnitComponent) {
+  updateUnit(myUnit: UnitComponent, user: User) {
     // return this.getUserTokenOnce().subscribe(res => {
     //   this._userToken = res;
     // });
@@ -299,7 +299,7 @@ export class ManagementService implements OnInit, OnDestroy {
         // updatedUnits[updatedUnitIndex] = myUnit;
         updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti);
         // return this.http.put(`https://study-planner-e6035.firebaseio.com/units/${myUnit.id}.json`,
-        return this.http.put(`https://study-planner-w-authentication.firebaseio.com/users/${this._user.id}/units/${myUnit.id}.json?auth=${this._user.token}`,
+        return this.http.put(`https://study-planner-w-authentication.firebaseio.com/users/${user.id}/units/${myUnit.id}.json?auth=${user.token}`,
           { ...myUnit, id: null }
         );
       }),

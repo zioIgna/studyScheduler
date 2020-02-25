@@ -6,6 +6,9 @@ import { DeadlineStatus } from '../deadlineStatus.model';
 import { Subscription, Subject } from 'rxjs';
 import { UnitsData } from '../units-data';
 import { HttpClient } from '@angular/common/http';
+import { AuthenticationService } from '../auth/authentication.service';
+import { User } from '../auth/user.model';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-unit-detail',
@@ -19,7 +22,12 @@ export class UnitDetailPage implements OnInit, OnDestroy {
   // private _unit = new Subject<UnitComponent>();
   private unitSubscription: Subscription;
 
-  constructor(private managementSrv: ManagementService, private route: ActivatedRoute, private http: HttpClient) {
+  constructor(
+    private managementSrv: ManagementService,
+    private route: ActivatedRoute,
+    private http: HttpClient,
+    private authService: AuthenticationService
+  ) {
     // private route: ActivatedRouteSnapshot;
 
   }
@@ -29,44 +37,48 @@ export class UnitDetailPage implements OnInit, OnDestroy {
     let index = this.unit.appuntamenti.findIndex(app => app.giorno == giorno);
     let myApp = this.unit.appuntamenti[index];
     let myStatus = myApp.status;
-    if (this.pastDate(new Date(myApp.giorno))) {
-      // if (new Date(myApp.giorno).getTime() <= new Date().getTime()) {
-      if (myStatus == DeadlineStatus.Overdue) {
-        // myStatus = DeadlineStatus.Done;
-        console.log('lo status è overdue');
-        myApp.status = DeadlineStatus.Done;
-        // console.log('ora myStatus è: ', myStatus);
-      } else if (myStatus == DeadlineStatus.Done) {
-        console.log('lo status è done');
-        myApp.status = DeadlineStatus.Overdue;
-        // myStatus = DeadlineStatus.Overdue;
+    let user: User;
+    this.authService.user.pipe(take(1)).subscribe(res => {
+      user = res;
+      if (this.pastDate(new Date(myApp.giorno))) {
+        // if (new Date(myApp.giorno).getTime() <= new Date().getTime()) {
+        if (myStatus == DeadlineStatus.Overdue) {
+          // myStatus = DeadlineStatus.Done;
+          console.log('lo status è overdue');
+          myApp.status = DeadlineStatus.Done;
+          // console.log('ora myStatus è: ', myStatus);
+        } else if (myStatus == DeadlineStatus.Done) {
+          console.log('lo status è done');
+          myApp.status = DeadlineStatus.Overdue;
+          // myStatus = DeadlineStatus.Overdue;
+        }
+        // myStatus = myStatus == 'OVERDUE' ? DeadlineStatus.Done : DeadlineStatus.Overdue;
+        // console.log('myStatus = ', myStatus);
+        // if (this.unit.pastDates.findIndex(pastDate => {
+        //   console.log('questo pastDate è: ', pastDate);
+        //   return pastDate.status == DeadlineStatus.Overdue;
+        // }) > -1) {
+        //   this.unit.overdueDates = true;
+        // } else {
+        //   this.unit.overdueDates = false;
+        // };
+        this.managementSrv.updateUnit(this.unit, user).subscribe((res: UnitsData) => {
+          this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti);
+        });
+        console.log('dopo switchstatus, la unit è: ', this.unit);
+      } else if (this.sameDay(new Date(myApp.giorno))) {
+        console.log('è lo stesso giorno');
+        if (myStatus == DeadlineStatus.Due) {
+          myApp.status = DeadlineStatus.Done;
+        } else {
+          myApp.status = DeadlineStatus.Due;
+        }
+        console.log('sto passando questa unit allo update: ', this.unit);
+        this.managementSrv.updateUnit(this.unit, user).subscribe((res: UnitsData) => {
+          this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti);
+        });
       }
-      // myStatus = myStatus == 'OVERDUE' ? DeadlineStatus.Done : DeadlineStatus.Overdue;
-      // console.log('myStatus = ', myStatus);
-      // if (this.unit.pastDates.findIndex(pastDate => {
-      //   console.log('questo pastDate è: ', pastDate);
-      //   return pastDate.status == DeadlineStatus.Overdue;
-      // }) > -1) {
-      //   this.unit.overdueDates = true;
-      // } else {
-      //   this.unit.overdueDates = false;
-      // };
-      this.managementSrv.updateUnit(this.unit).subscribe((res: UnitsData) => {
-        this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti);
-      });
-      console.log('dopo switchstatus, la unit è: ', this.unit);
-    } else if (this.sameDay(new Date(myApp.giorno))) {
-      console.log('è lo stesso giorno');
-      if (myStatus == DeadlineStatus.Due) {
-        myApp.status = DeadlineStatus.Done;
-      } else {
-        myApp.status = DeadlineStatus.Due;
-      }
-      console.log('sto passando questa unit allo update: ', this.unit);
-      this.managementSrv.updateUnit(this.unit).subscribe((res: UnitsData) => {
-        this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti);
-      });
-    }
+    });
   }
 
   pastDate(date1: Date): boolean {
