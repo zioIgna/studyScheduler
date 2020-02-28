@@ -2,7 +2,7 @@ import { Injectable, OnInit, OnDestroy } from '@angular/core';
 import { Scadenza } from './scadenza.model';
 import { DeadlineStatus } from './deadlineStatus.model';
 import { NgForm } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { Book } from './Book';
 import { UnitComponent } from './unit/unit.component';
 import { BehaviorSubject, Observable, of, from, Subscription } from 'rxjs';
@@ -14,6 +14,7 @@ import { UnitsData } from './units-data';
 import { IBookData } from './ibook-data';
 import { AuthenticationService } from './auth/authentication.service';
 import { User } from './auth/user.model';
+import { Router } from '@angular/router';
 
 // interface unitsData {
 //   appuntamenti: Scadenza[];
@@ -35,7 +36,9 @@ export class ManagementService implements OnInit, OnDestroy {
   constructor(
     private modalCtrl: ModalController,
     private http: HttpClient,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private alertCtrl: AlertController,
+    private router: Router
   ) { }
 
   private _books = new BehaviorSubject<Book[]>([]);
@@ -133,7 +136,22 @@ export class ManagementService implements OnInit, OnDestroy {
         console.log('nella seconda parte di aggiunta di un libro ho ottenuto: ', res);
         myBook.id = generatedBookId;
         this._books.next(res.concat(myBook));
-      });
+      },
+        error => {
+          this.alertCtrl.create({
+            header: 'An error occurred!',
+            message: 'Could not load book.',
+            buttons: [
+              {
+                text: 'Okay',
+                // handler: () => {
+                //   this.router.navigateByUrl('/navigation/tabs/args');
+                // }
+              }
+            ]
+          }).then(alertEl => alertEl.present());
+        }
+      );
     // this._books.push(myBook);
     // console.log('questi sono i books: ', this._books);
   }
@@ -210,7 +228,23 @@ export class ManagementService implements OnInit, OnDestroy {
         console.log('ora sì ho ottenuto: ', res);
         this._unitlist.next(res.concat(myUnit));
         console.log('ora myUnit è: ', myUnit);
-      });
+      },
+        error => {
+          this.alertCtrl.create({
+            header: 'An error occurred!',
+            message: 'Could not load book.',
+            buttons: [
+              {
+                text: 'Okay',
+                // handler: () => {
+                //   this.router.navigateByUrl('/navigation/tabs/args');
+                // }
+              }
+            ]
+          }).then(alertEl => alertEl.present());
+        }
+
+      );
     // this.unitlist.pipe(take(1)).subscribe(units => {
     //   this._unitlist.next(units.concat(myUnit));
     // });

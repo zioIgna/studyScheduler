@@ -78,6 +78,10 @@ export class ArgomentiPage implements OnInit, OnDestroy {
     // });
   }
 
+  onLogout() {
+    this.authService.logout();
+  }
+
   ngOnInit() {
     this.firstUnitsSub = this.authService.user.pipe(take(1)).subscribe(res => {
       this.user = res;

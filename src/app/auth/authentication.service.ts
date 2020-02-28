@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { tap, map } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { User } from './user.model';
+import { Router } from '@angular/router';
 
 export interface AuthResponseData {
   idToken: string;
@@ -54,7 +55,7 @@ export class AuthenticationService {
     return this._user.asObservable();
   }
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   signUp(email: string, password: string) {
     return this.http.post<AuthResponseData>(
@@ -72,6 +73,7 @@ export class AuthenticationService {
 
   logout() {
     this._user.next(null);
+    this.router.navigateByUrl('/auth');
   }
 
   private setUserData(userData: AuthResponseData) {
