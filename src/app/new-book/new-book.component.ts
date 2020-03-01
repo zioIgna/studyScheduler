@@ -12,15 +12,17 @@ export class NewBookComponent implements OnInit {
 
   constructor(private managementSrv: ManagementService, private modalCtrl: ModalController) { }
 
-  onCreateBook(form: NgForm){
-    this.managementSrv.addBook(form);
+  onCreateBook(form: NgForm) {
+    this.managementSrv.addBook(form).subscribe(res => {
+      console.log("Libro aggiunto", res);
+    });
     this.modalCtrl.dismiss();
   }
 
-  onDismiss(){
+  onDismiss() {
     this.modalCtrl.dismiss();
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
 }

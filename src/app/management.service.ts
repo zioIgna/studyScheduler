@@ -92,47 +92,106 @@ export class ManagementService implements OnInit {
       autore: form.value.autore,
       pagine: form.value.pagine
     };
-    return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/books.json', myBook)
-      .pipe(
-        switchMap(res => {
-          console.log('alla aggiunta del libro ho ottenuto: ', res);
-          generatedBookId = res.name;
-          return this.books
-        }),
-        take(1)
-      )
-      .subscribe(res => {
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.post<{ name: string }>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/books.json?auth=${token}`, myBook)
+      }),
+      take(1),
+      switchMap(res => {
+        console.log('alla aggiunta del libro ho ottenuto: ', res);
+        generatedBookId = res.name;
+        return this.books
+      }),
+      take(1),
+      tap(res => {
         console.log('nella seconda parte di aggiunta di un libro ho ottenuto: ', res);
         myBook.id = generatedBookId;
         this._books.next(res.concat(myBook));
-      });
-    // this._books.push(myBook);
-    // console.log('questi sono i books: ', this._books);
+      })
+    );
+    // return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/books.json', myBook)
+    //   .pipe(
+    //     switchMap(res => {
+    //       console.log('alla aggiunta del libro ho ottenuto: ', res);
+    //       generatedBookId = res.name;
+    //       return this.books
+    //     }),
+    //     take(1)
+    //   )
+    //   .subscribe(res => {
+    //     console.log('nella seconda parte di aggiunta di un libro ho ottenuto: ', res);
+    //     myBook.id = generatedBookId;
+    //     this._books.next(res.concat(myBook));
+    //   });
   }
 
   fetchBooks() {
-    return this.http.get<{ [key: string]: IBookData }>('https://study-planner-e6035.firebaseio.com/books.json')
-      .pipe(
-        take(1),
-        map(resData => {
-          let books: Book[] = [];
-          for (const key in resData) {
-            if (resData.hasOwnProperty(key)) {
-              books.push({
-                id: key,
-                titolo: resData[key].titolo,
-                autore: resData[key].autore,
-                pagine: resData[key].pagine
-              })
-            }
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(resToken => {
+        return this.http.get<{ [key: string]: IBookData }>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/books.json?auth=${resToken}`)
+      }),
+      take(1),
+      map(resData => {
+        let books: Book[] = [];
+        for (const key in resData) {
+          if (resData.hasOwnProperty(key)) {
+            books.push({
+              id: key,
+              titolo: resData[key].titolo,
+              autore: resData[key].autore,
+              pagine: resData[key].pagine
+            })
           }
-          return books;
-        }),
-        tap(books => {
-          console.log('sto inviando i books dopo il fetch: ', books);
-          this._books.next(books);
-        })
-      )
+        }
+        return books;
+      }),
+      tap(books => {
+        console.log('sto inviando i books dopo il fetch: ', books);
+        this._books.next(books);
+      })
+    )
+    // return this.http.get<{ [key: string]: IBookData }>('https://study-planner-e6035.firebaseio.com/books.json')
+    // .pipe(
+    //   take(1),
+    //   map(resData => {
+    //     let books: Book[] = [];
+    //     for (const key in resData) {
+    //       if (resData.hasOwnProperty(key)) {
+    //         books.push({
+    //           id: key,
+    //           titolo: resData[key].titolo,
+    //           autore: resData[key].autore,
+    //           pagine: resData[key].pagine
+    //         })
+    //       }
+    //     }
+    //     return books;
+    //   }),
+    //   tap(books => {
+    //     console.log('sto inviando i books dopo il fetch: ', books);
+    //     this._books.next(books);
+    //   })
+    // )
   }
 
   addUnit(form: NgForm) {
@@ -160,75 +219,82 @@ export class ManagementService implements OnInit {
         new Scadenza(add20days, DeadlineStatus.Due)
       ]
     );
-    return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/units.json', myUnit)
-      .pipe(
-        switchMap(res => {
-          generatedId = res.name;
-          myUnit.id = generatedId;
-          console.log('ho ottenuto: ', res);
-          return this.unitlist
-        }),
-        take(1)
-        // tap(units => {
-        //   myUnit.id = generatedId;
-        //   this._unitlist.next(units.concat(myUnit));
-        // })
-      )
-      .subscribe(res => {
-        console.log('ora sì ho ottenuto: ', res);
-        this._unitlist.next(res.concat(myUnit));
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.post<{ name: string }>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units.json?auth=${token}`, myUnit)
+      }),
+      take(1),
+      switchMap(res => {
+        generatedId = res.name;
+        myUnit.id = generatedId;
+        console.log('ho ottenuto: ', res);
+        return this.unitlist;
+      }),
+      take(1),
+      tap(units => {
+        console.log('ora sì ho ottenuto: ', units);
+        this._unitlist.next(units.concat(myUnit));
         console.log('ora myUnit è: ', myUnit);
-      });
-    // this.unitlist.pipe(take(1)).subscribe(units => {
-    //   this._unitlist.next(units.concat(myUnit));
-    // });
-
-    // this.unitlist.push(myUnit);
-    // this.modalCtrl.dismiss();
-    this.sortUnitList();
-    console.log('le units ora sono: ', this.unitlist);
+      })
+    )
   }
 
-  fetchUnits(userId: string) {
-    return this.http.get<{ [key: string]: UnitsData }>(`https://study-planner-e6035.firebaseio.com/units.json?auth=${userId}`)
-      .pipe(
-        // tap(resData => {
-        //   console.log('queste sono le units nel database: ', resData);
-        //   return resData;
-        // }),
-        take(1),
-        map(resData => {
-          let units: UnitComponent[] = [];
-          for (const key in resData) {
-            if (resData.hasOwnProperty(key)) {
-              let myAppuntamenti: Scadenza[] = [];
-              for (let appuntamento of resData[key].appuntamenti) {
-                let today = new Date();
-                if (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getDate(), today.getMonth(), today.getDate()) < 0) {
-                  // if (new Date(appuntamento.giorno).getTime() < new Date().getTime() && appuntamento.status == 'DUE') {
-                  appuntamento.status = DeadlineStatus.Overdue;
-                }
-                myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));
+  fetchUnits() {
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.get<{ [key: string]: UnitsData }>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units.json?auth=${token}`)
+      }),
+      take(1),
+      map(resData => {
+        let units: UnitComponent[] = [];
+        for (const key in resData) {
+          if (resData.hasOwnProperty(key)) {
+            let myAppuntamenti: Scadenza[] = [];
+            for (let appuntamento of resData[key].appuntamenti) {
+              let today = new Date();
+              if (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getDate(), today.getMonth(), today.getDate()) < 0) {
+                appuntamento.status = DeadlineStatus.Overdue;
               }
-              units.push(new UnitComponent(
-                key,
-                resData[key].title,
-                resData[key].libro,
-                resData[key].chapterFrom,
-                resData[key].chapterTo,
-                new Date(resData[key].createdOn),
-                // resData[key].appuntamenti
-                myAppuntamenti
-              ))
+              myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));
             }
+            units.push(new UnitComponent(
+              key,
+              resData[key].title,
+              resData[key].libro,
+              resData[key].chapterFrom,
+              resData[key].chapterTo,
+              new Date(resData[key].createdOn),
+              myAppuntamenti
+            ))
           }
-          return units;
-        }),
-        tap(units => {
-          console.log('sto inviando le units dopo il fetch: ', units);
-          this._unitlist.next(units);
-        })
-      );
+        }
+        return units;
+      }),
+      tap(units => {
+        console.log('sto inviando le units dopo il fetch: ', units);
+        this._unitlist.next(units);
+      })
+    )
   }
 
   getUnit(unitName: string) {
@@ -245,24 +311,33 @@ export class ManagementService implements OnInit {
 
   updateUnit(myUnit: UnitComponent) {
     let updatedUnits: UnitComponent[];
-    return this.unitlist.pipe(
-      // take(1),
-      // switchMap(units => {
-      //   if (!units || units.length == 0) {
-      //     return this.fetchUnits();
-      //   } else {
-      //     return of(units);
-      //   }
-      // }),
+    let fetchedUserId: string;
+    let fetchedToken: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(resUserId => {
+        if (!resUserId) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = resUserId;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        if (!token) {
+          throw new Error('Token not fount!');
+        }
+        fetchedToken = token;
+        return this.unitlist;
+      }),
       take(1),
       switchMap(units => {
         console.log('queste sono le units ricevute allo updateUnit: ', units);
         const updatedUnitIndex = units.findIndex(un => un.id === myUnit.id);
         updatedUnits = [...units];
         const oldUnit = updatedUnits[updatedUnitIndex];
-        // updatedUnits[updatedUnitIndex] = myUnit;
         updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti);
-        return this.http.put(`https://study-planner-e6035.firebaseio.com/units/${myUnit.id}.json`,
+        return this.http.put(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${myUnit.id}.json?auth=${fetchedToken}`,
           { ...myUnit, id: null }
         );
       }),
@@ -270,30 +345,7 @@ export class ManagementService implements OnInit {
         console.log('la risposta dopo lo update è: ', res);
         this._unitlist.next(updatedUnits);
       })
-    );
-
-    // this.http.put(`https://study-planner-e6035.firebaseio.com/units/${myUnit.id}.json`,
-    //   { ...myUnit, id: null }
-    // ).pipe(
-    //   tap(() =>{
-    //     let newUnits = units.filter(unit => unit.id != myUnit.id);
-    //   })
-
-    // ).subscribe(units =>{
-
-    // });
-
-    this.unitlist.pipe(take(1)).subscribe(units => {
-      let newUnits = units.filter(unit => unit.id != myUnit.id);
-      // newUnits = newUnits.concat(myUnit);
-      newUnits.push(myUnit);
-      this._unitlist.next(newUnits);
-      // console.log('ora la unitlist aggiornata è: ', newUnits);
-      this.unitlist.pipe(take(1)).subscribe(units => {
-        this.sortUnitList();
-        console.log('ora la unitlist aggiornata è: ', units);
-      });
-    })
+    )
   }
 
 

@@ -71,13 +71,10 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userIdTokenSub = this.authService.userIdToken.pipe(take(1)).subscribe(res => {
-      this.userIdToken = res;
-      this.managementSrv.fetchUnits(this.userIdToken).subscribe(newUnits => {
-        for (let singleUnit of newUnits) {
-          this.managementSrv.updateUnit(singleUnit).subscribe();
-        }
-      });
+    this.managementSrv.fetchUnits().pipe(take(1)).subscribe(newUnits => {
+      for (let singleUnit of newUnits) {
+        this.managementSrv.updateUnit(singleUnit).subscribe();
+      }
     });
     this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
       let futureUnits = units.filter(unit => unit.nextDate != undefined);

@@ -18,7 +18,10 @@ export class NewUnitComponent implements OnInit, OnDestroy {
   constructor(private managementSrv: ManagementService, private modalCtrl: ModalController) { }
 
   onCreateUnit(form: NgForm) {
-    this.managementSrv.addUnit(form);
+    this.managementSrv.addUnit(form).subscribe(res => {
+      console.log('Aggiunta nuova unit ', res);
+
+    });
     this.modalCtrl.dismiss();
   }
 
@@ -33,7 +36,7 @@ export class NewUnitComponent implements OnInit, OnDestroy {
     // console.log('i books nella new-unit component sono: ', this._books);
   }
 
-  onDismiss(){
+  onDismiss() {
     this.modalCtrl.dismiss();
   }
 
