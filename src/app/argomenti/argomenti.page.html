@@ -1,5 +1,11 @@
-<ion-header color="primary">
-  <ion-toolbar color="primary">
+<ion-header >
+  <ion-toolbar >
+    <ion-buttons slot="end">
+      <ion-button (click)="onLogout()">
+        <ion-icon slot="end" name="log-out"></ion-icon>
+        Logout
+      </ion-button>
+    </ion-buttons>
     <ion-title>argomenti</ion-title>
   </ion-toolbar>
 </ion-header>

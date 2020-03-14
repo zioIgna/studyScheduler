@@ -7,6 +7,7 @@ import { UnitComponent } from '../unit/unit.component';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators/';
 import { AuthenticationService } from '../auth/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-argomenti',
@@ -21,10 +22,21 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   private userIdTokenSub: Subscription;
   private userIdToken: string;
 
-  constructor(private modalCtrl: ModalController, private actionSheetCtrl: ActionSheetController, private managementSrv: ManagementService, private authService: AuthenticationService) { }
+  constructor(
+    private modalCtrl: ModalController,
+    private actionSheetCtrl: ActionSheetController,
+    private managementSrv: ManagementService,
+    private authService: AuthenticationService,
+    private router: Router
+  ) { }
 
   onShowConsole() {
     console.log('Bottone cliccato!');
+  }
+
+  onLogout() {
+    this.authService.logout();
+    this.router.navigateByUrl('/auth');
   }
 
   onAddBook() {
