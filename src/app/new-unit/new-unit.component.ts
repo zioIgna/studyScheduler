@@ -27,9 +27,9 @@ export class NewUnitComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // this._books = this.managementSrv.books;
-    this.managementSrv.fetchBooks().subscribe(res => {
-      this._books = res;
-    });
+      this.managementSrv.fetchBooks().subscribe(res => {
+        this._books = res;
+      });
     this.booksSub = this.managementSrv.books.subscribe(res => {
       this._books = res;
     })

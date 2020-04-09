@@ -10,6 +10,8 @@ const routes: Routes = [
   { path: 'navigation', loadChildren: './navigation/navigation.module#NavigationPageModule' },
   // { path: 'unit-detail', loadChildren: './unit-detail/unit-detail.module#UnitDetailPageModule' },
   { path: 'auth', loadChildren: './auth/auth.module#AuthPageModule' },
+  // { path: 'update-unit', loadChildren: './update-unit/update-unit.module#UpdateUnitPageModule' },
+
 ];
 
 @NgModule({

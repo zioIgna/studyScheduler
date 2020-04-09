@@ -13,7 +13,8 @@
       <ion-card-subtitle>
         <ion-label style="float:left">{{unit.title}}
           <!-- <ion-badge *ngIf="unit?.pastDates != undefined" [color]="unit?.overdueDates ? 'danger' : 'primary' "> -->
-          <ion-badge *ngIf="unit?.pastDates != undefined" [color]="unit?.overdueDates ? 'danger' : unit?.nextDate == undefined ? 'primary' : 'secondary' ">
+          <ion-badge *ngIf="unit?.pastDates != undefined"
+            [color]="unit?.overdueDates ? 'danger' : unit?.nextDate == undefined ? 'primary' : 'secondary' ">
             <ion-icon [name]="unit.overdueDates ? 'close' : 'checkmark'"></ion-icon>
           </ion-badge>
         </ion-label>
@@ -26,7 +27,9 @@
     </ion-item>
     <ion-card-content>
       <ion-item lines='none' text-center>
-        <ion-label class="ion-text-uppercase ion-no-padding"><h2><b>{{unit.libro}}</b></h2></ion-label>
+        <ion-label class="ion-text-uppercase ion-no-padding">
+          <h2><b>{{unit.libro}}</b></h2>
+        </ion-label>
       </ion-item>
       <p *ngIf="unit?.nextDate">nextDate: {{unit?.nextDate.giorno | date}}</p>
       <!-- <div *ngIf="unit.nextDate == undefined"> -->
@@ -40,5 +43,9 @@
       <p *ngIf="!unit?.overdueDates && !unit?.nextDate">Task completed!</p>
       <!-- </div> -->
     </ion-card-content>
+    <!-- <ion-tab-button [routerLink]="['/navigation/tabs/args', unit.title, 'edit']"> -->
+    <ion-tab-button [routerLink]="['/navigation/tabs/args', unit.id, 'edit']">
+      <ion-icon name="create"></ion-icon><ion-label>Edit</ion-label>
+    </ion-tab-button>
   </ion-card>
 </ion-content>

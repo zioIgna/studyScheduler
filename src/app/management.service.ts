@@ -309,6 +309,15 @@ export class ManagementService implements OnInit {
     // })
   }
 
+  getUnitById(unitId: string) {
+    return this.unitlist.pipe(
+      take(1),
+      map(units => {
+        return { ...units.find(unit => unit.id == unitId) };
+      })
+    )
+  }
+
   updateUnit(myUnit: UnitComponent) {
     let updatedUnits: UnitComponent[];
     let fetchedUserId: string;

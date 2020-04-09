@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>update-unit</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #unitForm="ngForm" (ngSubmit)="onUpdateUnit(unitForm)">
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+          <ion-item>
+            <ion-label position="floating">Nome dell'unità </ion-label>
+            <ion-input name="riferimenti" required [ngModel]="unit.title" type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+          <ion-item>
+            <ion-label position="floating">Libro</ion-label>
+            <ion-select name="libro" [ngModel]="unit.libro" placeholder="Select One">
+              <ion-select-option *ngFor="let book of _books" [value]="book.titolo" required>{{book?.titolo}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+          <ion-item>
+            <ion-label position="floating">paragrafo di inizio</ion-label>
+            <ion-input name="chapterFrom" type="text" required [ngModel]="unit.chapterFrom"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+          <ion-item>
+            <ion-label position="floating">paragrafo di fine</ion-label>
+            <ion-input name="chapterTo" type="text" required [ngModel]="unit.chapterTo"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+      </ion-row>
+      <ion-col size-sm="6" offset-sm="3">
+        <ion-button block color="secondary" type="submit" [disabled]="unitForm.invalid">
+          Save!
+        </ion-button>
+      </ion-col>
+    </ion-grid>
+  </form>
+</ion-content>

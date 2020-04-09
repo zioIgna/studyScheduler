@@ -19,8 +19,22 @@ const routes: Routes = [
                                 loadChildren: '../argomenti/argomenti.module#ArgomentiPageModule'
                             },
                             {
-                                path: ':unitName',
-                                loadChildren: '../unit-detail/unit-detail.module#UnitDetailPageModule'
+                                // path: ':unitName',
+                                path: ':unitId',
+                                children:
+                                    [
+                                        {
+                                            path: 'edit',
+                                            loadChildren: '../update-unit/update-unit.module#UpdateUnitPageModule'
+                                        }
+                                        ,
+                                        {
+                                            path: '',
+                                            // redirectTo: '/navigation/tabs/args/:unitName',
+                                            loadChildren: '../unit-detail/unit-detail.module#UnitDetailPageModule'
+                                            // pathMatch: 'full'
+                                        }
+                                    ]
                             }
                         ]
                 },
