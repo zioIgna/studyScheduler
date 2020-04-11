@@ -249,6 +249,39 @@ export class ManagementService implements OnInit {
     )
   }
 
+  editUnit(form: NgForm, unitId: string) {
+    let fetchedUserId: string;
+    let editedUnit: UnitComponent;
+    let updFields = {
+      title: form.value.riferimenti,
+      libro: form.value.libro,
+      chapterFrom: form.value.chapterFrom,
+      chapterTo: form.value.chapterTo
+    };
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.patch<{}>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${unitId}.json?auth=${token}`, updFields)
+      }),
+      take(1),
+      switchMap(res => {
+        console.log('ho ottenuto: ', res);
+        return this.fetchUnits();
+      }),
+      tap(updatedUnits => {
+        this._unitlist.next(updatedUnits);
+      })
+    )
+  }
+
   fetchUnits() {
     let fetchedUserId: string;
     return this.authService.userId.pipe(
@@ -293,6 +326,24 @@ export class ManagementService implements OnInit {
       tap(units => {
         console.log('sto inviando le units dopo il fetch: ', units);
         this._unitlist.next(units);
+      })
+    )
+  }
+
+  fetchUnit(unitId: string) {
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.get<{ fetchedUnit: UnitsData }>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${unitId}.json?auth=${token}`)
       })
     )
   }

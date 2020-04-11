@@ -28,7 +28,7 @@
     <ion-card-content>
       <ion-item lines='none' text-center>
         <ion-label class="ion-text-uppercase ion-no-padding">
-          <h2><b>{{unit.libro}}</b></h2>
+          <h2><b>{{unit?.libro}}</b></h2>
         </ion-label>
       </ion-item>
       <p *ngIf="unit?.nextDate">nextDate: {{unit?.nextDate.giorno | date}}</p>

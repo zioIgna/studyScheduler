@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ManagementService } from '../management.service';
 import { UnitComponent } from '../unit/unit.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Book } from '../Book';
 import { Subscription } from 'rxjs';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-update-unit',
@@ -18,7 +19,14 @@ export class UpdateUnitPage implements OnInit, OnDestroy {
   private _books: Book[];
   private booksSub: Subscription;
 
-  constructor(private managementSrv: ManagementService, private route: ActivatedRoute) { }
+  constructor(private managementSrv: ManagementService, private route: ActivatedRoute, private router: Router) { }
+
+  onEditUnit(form: NgForm) {
+    this.managementSrv.editUnit(form, this.unitId).subscribe(res => {
+      console.log("Allo edit della untià ho ottenuto: ", res);
+      this.router.navigate(['/navigation/tabs/args', this.unitId]);
+    });
+  }
 
   ngOnInit() {
     this.unitId = this.route.snapshot.params['unitId'];

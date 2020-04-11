@@ -77,9 +77,12 @@ export class UnitDetailPage implements OnInit, OnDestroy {
     // this.managementSrv.getUnit(this.unitName).subscribe(myUnit => {
     //   this.unit = myUnit;
     // })
-    this.managementSrv.getUnitById(this.unitId).subscribe(myUnit => {
+    this.unitSubscription = this.managementSrv.getUnitById(this.unitId).subscribe(myUnit => {
       this.unit = myUnit;
     })
+    this.managementSrv.unitlist.subscribe(units => {
+      this.unit = units.find(newUnit => newUnit.id == this.unitId);
+    });
   }
 
   ngOnDestroy() {
