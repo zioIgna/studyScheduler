@@ -26,8 +26,11 @@ const routes: Routes = [
                                         {
                                             path: 'edit',
                                             loadChildren: '../update-unit/update-unit.module#UpdateUnitPageModule'
-                                        }
-                                        ,
+                                        },
+                                        {
+                                            path: 'reschedule',
+                                            loadChildren: '../reschedule-unit/reschedule-unit.module#RescheduleUnitPageModule'
+                                        },
                                         {
                                             path: '',
                                             // redirectTo: '/navigation/tabs/args/:unitName',

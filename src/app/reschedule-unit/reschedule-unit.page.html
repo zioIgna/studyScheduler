@@ -1,0 +1,80 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>reschedule-unit</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Select the first date to shift:</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- <form #form="ngForm"> -->
+      <!-- <ion-radio-group name="selection" #shiftingDateCtrl>
+          <ion-item *ngFor="let date of unit?.appuntamenti">
+            <ion-label>{{date.giorno | date}}</ion-label>
+            <ion-radio slot="start" [value]="date.giorno"></ion-radio>
+          </ion-item>
+        </ion-radio-group> -->
+      <ion-item>
+        <ion-label position="floating">Pick a value</ion-label>
+        <ion-select [(ngModel)]="selectedValue" #shiftingDate>
+          <ion-select-option *ngFor="let date of unit?.appuntamenti; let i = index" [value]="i">{{date.giorno | date}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-row><p>{{selectedValue}}</p></ion-row>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-label>Select the new date for that task:</ion-label>
+          </ion-col>
+        </ion-row>
+        <!-- </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label>Day</ion-label>
+              <ion-select></ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Month</ion-label>
+              <ion-select value="12">
+                <ion-select-option value="01">January</ion-select-option>
+                <ion-select-option value="02">February</ion-select-option>
+                <ion-select-option value="03">March</ion-select-option>
+                <ion-select-option value="04">April</ion-select-option>
+                <ion-select-option value="05">May</ion-select-option>
+                <ion-select-option value="06">June</ion-select-option>
+                <ion-select-option value="07">July</ion-select-option>
+                <ion-select-option value="08">August</ion-select-option>
+                <ion-select-option value="09">September</ion-select-option>
+                <ion-select-option value="10">October</ion-select-option>
+                <ion-select-option value="11">November</ion-select-option>
+                <ion-select-option value="12">December</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+        </ion-row> -->
+        <ion-row>
+          <ion-item>
+            <ion-label position="floating">MM DD YY</ion-label>
+            <ion-datetime display-format="MMM DD YYYY" picker-format="DD MMM YY"
+            name="dateSelector">
+            </ion-datetime>
+          </ion-item>
+        </ion-row>
+        <!-- <ion-item>
+        </ion-item>
+        <p>{{newDate}}</p> -->
+      </ion-grid>
+      <ion-button type="button" (click)="showValue()" [disabled]="selectedValue == undefined">Test</ion-button>
+      <!-- </form> -->
+    </ion-card-content>
+  </ion-card>
+</ion-content>

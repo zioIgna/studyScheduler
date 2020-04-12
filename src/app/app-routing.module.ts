@@ -9,7 +9,8 @@ const routes: Routes = [
   // { path: 'calendario', loadChildren: './calendario/calendario.module#CalendarioPageModule' },
   { path: 'navigation', loadChildren: './navigation/navigation.module#NavigationPageModule' },
   // { path: 'unit-detail', loadChildren: './unit-detail/unit-detail.module#UnitDetailPageModule' },
-  { path: 'auth', loadChildren: './auth/auth.module#AuthPageModule' },
+  { path: 'auth', loadChildren: './auth/auth.module#AuthPageModule' },  { path: 'reschedule-unit', loadChildren: './reschedule-unit/reschedule-unit.module#RescheduleUnitPageModule' },
+
   // { path: 'update-unit', loadChildren: './update-unit/update-unit.module#UpdateUnitPageModule' },
 
 ];

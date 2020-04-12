@@ -44,8 +44,19 @@
       <!-- </div> -->
     </ion-card-content>
     <!-- <ion-tab-button [routerLink]="['/navigation/tabs/args', unit.title, 'edit']"> -->
-    <ion-tab-button [routerLink]="['/navigation/tabs/args', unit.id, 'edit']">
-      <ion-icon name="create"></ion-icon><ion-label>Edit</ion-label>
-    </ion-tab-button>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-button [routerLink]="['/navigation/tabs/args', unit.id, 'edit']" expand="block" fill="outline">
+              <ion-icon name="create"></ion-icon><ion-label>Edit</ion-label>
+            </ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button [routerLink]="['/navigation/tabs/args', unit.id, 'reschedule']" expand="block" fill="outline">
+              <ion-icon name="time"></ion-icon><ion-label>Reschedule</ion-label>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
   </ion-card>
 </ion-content>
