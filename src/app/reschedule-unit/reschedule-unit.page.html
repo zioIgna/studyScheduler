@@ -3,14 +3,15 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>reschedule-unit</ion-title>
+    <ion-title>Deadlines rescheduling</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-card>
     <ion-card-header>
-      <ion-card-subtitle>Select the first date to shift:</ion-card-subtitle>
+      <ion-card-subtitle>Chose the first date to reschedule, all the next dates will be shifted accordingly...
+      </ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
       <!-- <form #form="ngForm"> -->
@@ -23,16 +24,19 @@
       <ion-item>
         <ion-label position="floating">Pick a value</ion-label>
         <ion-select [(ngModel)]="selectedValue" #shiftingDate>
-          <ion-select-option *ngFor="let date of unit?.appuntamenti; let i = index" [value]="i">{{date.giorno | date}}</ion-select-option>
+          <ion-select-option *ngFor="let date of unit?.appuntamenti; let i = index" [value]="i">{{date.giorno | date}}
+          </ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-row><p>{{selectedValue}}</p></ion-row>
+      <!-- <ion-row>
+        <p>{{selectedValue}}</p>
+      </ion-row> -->
       <ion-grid>
-        <ion-row>
+        <!-- <ion-row>
           <ion-col>
             <ion-label>Select the new date for that task:</ion-label>
           </ion-col>
-        </ion-row>
+        </ion-row> -->
         <!-- </ion-row>
         <ion-row>
           <ion-col>
@@ -63,17 +67,29 @@
         </ion-row> -->
         <ion-row>
           <ion-item>
-            <ion-label position="floating">MM DD YY</ion-label>
-            <ion-datetime display-format="MMM DD YYYY" picker-format="DD MMM YY"
-            name="dateSelector">
+            <ion-label position="floating">Tap to select the new date:</ion-label>
+            <ion-datetime display-format="MMM DD YYYY" picker-format="DD MMM YY" [(ngModel)]="newDateStr"
+              name="dateSelector">
             </ion-datetime>
           </ion-item>
         </ion-row>
         <!-- <ion-item>
-        </ion-item>
-        <p>{{newDate}}</p> -->
+          <p>{{newDateStr | date}}</p>
+        </ion-item> -->
+        <ion-row>
+          <ion-col>
+            <ion-button type="button" (click)="onUpdateDeadlines()" [disabled]="selectedValue == undefined">Reschedule!</ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-row>
+              <ion-button type="button" (click)="onResetDeadlines()" color="danger">Reset</ion-button>
+            </ion-row>
+            <ion-row>
+              <ion-label>Reset all dates to original values</ion-label>
+            </ion-row>
+          </ion-col>
+        </ion-row>
       </ion-grid>
-      <ion-button type="button" (click)="showValue()" [disabled]="selectedValue == undefined">Test</ion-button>
       <!-- </form> -->
     </ion-card-content>
   </ion-card>

@@ -196,7 +196,7 @@ export class ManagementService implements OnInit {
 
   addUnit(form: NgForm) {
     let generatedId: string;
-    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12);
     console.log('today is: ', today);
     const in2days = new Date(today.getTime() + 1000 * 60 * 60 * 24 * 2);
     const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
@@ -270,6 +270,33 @@ export class ManagementService implements OnInit {
       take(1),
       switchMap(token => {
         return this.http.patch<{}>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${unitId}.json?auth=${token}`, updFields)
+      }),
+      take(1),
+      switchMap(res => {
+        console.log('ho ottenuto: ', res);
+        return this.fetchUnits();
+      }),
+      tap(updatedUnits => {
+        this._unitlist.next(updatedUnits);
+      })
+    )
+  }
+
+  rescheduleDates(unitId: string, appuntamenti: Scadenza[]) {
+    let fetchedUserId: string;
+    let payload = JSON.stringify(appuntamenti);
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.put<{}>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${unitId}/appuntamenti.json?auth=${token}`, appuntamenti)
       }),
       take(1),
       switchMap(res => {
