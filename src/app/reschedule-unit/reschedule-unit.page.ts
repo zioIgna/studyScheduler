@@ -54,7 +54,8 @@ export class RescheduleUnitPage implements OnInit {
   onUpdateDeadlines() {
     console.log('Il valore selezionato è: ', this.selectedValue);
     console.log('La nuova data è: ', this.newDateStr);
-    let shiftingDate = this.unit.appuntamenti[this.selectedValue].giorno;
+    let shiftingDate = new Date(this.unit.appuntamenti[this.selectedValue].giorno);
+    shiftingDate.setHours(12, 0, 0, 0);
     // let newDateNumber = Date.UTC(new Date(this.newDateStr).getFullYear(), new Date(this.newDateStr).getMonth(), new Date(this.newDateStr).getDate());
     // let newDate = new Date(newDateNumber);
     let newDate = new Date(
@@ -89,8 +90,28 @@ export class RescheduleUnitPage implements OnInit {
     }
   }
 
-  onResetDeadlines(){
-    
+  onResetDeadlines() {
+    this.alertCtrl.create({
+      header: 'Confirm reset?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            console.log('Valori resettati!');
+            this.managementSrv.resetDates(this.unit).subscribe(res => {
+              console.log('eseguito il reset');
+              this.router.navigate(['/navigation/tabs/args', this.unitId]);
+            })
+          }
+        }
+      ]
+    }).then(el => {
+      el.present();
+    });
   }
 
   private showAlert(message: string) {

@@ -309,6 +309,48 @@ export class ManagementService implements OnInit {
     )
   }
 
+  resetDates(unit: UnitComponent) {
+    let fetchedUserId: string;
+    let appuntamenti: Scadenza[] = [];
+    const newDate = new Date(unit.createdOn.getFullYear(), unit.createdOn.getMonth(), unit.createdOn.getDate(), 12);
+    console.log('new date is: ', newDate);
+    const in2days = new Date(newDate.getTime() + 1000 * 60 * 60 * 24 * 2);
+    const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
+    const add7days = new Date(add5days.getTime() + 1000 * 60 * 60 * 24 * 7);
+    const add13days = new Date(add7days.getTime() + 1000 * 60 * 60 * 24 * 13);
+    const add20days = new Date(add13days.getTime() + 1000 * 60 * 60 * 24 * 20);
+    appuntamenti = appuntamenti.concat(
+      [
+        new Scadenza(in2days, DeadlineStatus.Due),
+        new Scadenza(add5days, DeadlineStatus.Due),
+        new Scadenza(add7days, DeadlineStatus.Due),
+        new Scadenza(add13days, DeadlineStatus.Due),
+        new Scadenza(add20days, DeadlineStatus.Due)
+      ]);
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.put<{}>(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${unit.id}/appuntamenti.json?auth=${token}`, appuntamenti)
+      }),
+      take(1),
+      switchMap(res => {
+        console.log('ho ottenuto: ', res);
+        return this.fetchUnits();
+      }),
+      tap(updatedUnits => {
+        this._unitlist.next(updatedUnits);
+      })
+    )
+  }
+
   fetchUnits() {
     let fetchedUserId: string;
     return this.authService.userId.pipe(
