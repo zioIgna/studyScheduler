@@ -217,7 +217,8 @@ export class ManagementService implements OnInit {
         new Scadenza(add7days, DeadlineStatus.Due),
         new Scadenza(add13days, DeadlineStatus.Due),
         new Scadenza(add20days, DeadlineStatus.Due)
-      ]
+      ],
+      form.value.notes
     );
     let fetchedUserId: string;
     return this.authService.userId.pipe(
@@ -256,7 +257,8 @@ export class ManagementService implements OnInit {
       title: form.value.riferimenti,
       libro: form.value.libro,
       chapterFrom: form.value.chapterFrom,
-      chapterTo: form.value.chapterTo
+      chapterTo: form.value.chapterTo,
+      notes: form.value.notes
     };
     return this.authService.userId.pipe(
       take(1),
@@ -390,7 +392,8 @@ export class ManagementService implements OnInit {
               resData[key].chapterFrom,
               resData[key].chapterTo,
               new Date(resData[key].createdOn),
-              myAppuntamenti
+              myAppuntamenti,
+              resData[key].notes
             ))
           }
         }
@@ -469,7 +472,7 @@ export class ManagementService implements OnInit {
         const updatedUnitIndex = units.findIndex(un => un.id === myUnit.id);
         updatedUnits = [...units];
         const oldUnit = updatedUnits[updatedUnitIndex];
-        updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti);
+        updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti, myUnit.notes);
         return this.http.put(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${myUnit.id}.json?auth=${fetchedToken}`,
           { ...myUnit, id: null }
         );

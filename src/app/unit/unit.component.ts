@@ -20,6 +20,7 @@ export class UnitComponent {
     public chapterTo: string,
     public createdOn: Date,
     public appuntamenti: Scadenza[],
+    public notes: string
   ) {
     const today = new Date();
     today.setHours(12, 0, 0, 0);

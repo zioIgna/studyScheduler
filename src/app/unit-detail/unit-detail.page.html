@@ -42,21 +42,34 @@
       <p *ngIf="unit?.overdueDates">You have one or more overdue dates pending...</p>
       <p *ngIf="!unit?.overdueDates && !unit?.nextDate">Task completed!</p>
       <!-- </div> -->
+      <br>
+      <ion-item *ngIf="unit?.notes">
+        <ion-label>NOTES</ion-label>
+        <p>{{unit?.notes}}</p>
+      </ion-item>
+      <ion-list *ngIf="unit.questions">
+        <ion-list-header>Questions</ion-list-header>
+        <ion-item *ngFor="let question of unit?.questions"
+          [color]="question.difficulty == 'EASY' ? 'green' : question.difficulty == 'MEDIUM' ? 'yellow' : 'danger'">
+          {{question}}</ion-item>
+      </ion-list>
     </ion-card-content>
     <!-- <ion-tab-button [routerLink]="['/navigation/tabs/args', unit.title, 'edit']"> -->
-      <ion-grid>
-        <ion-row>
-          <ion-col>
-            <ion-button [routerLink]="['/navigation/tabs/args', unit.id, 'edit']" expand="block" fill="outline">
-              <ion-icon name="create"></ion-icon><ion-label>Edit</ion-label>
-            </ion-button>
-          </ion-col>
-          <ion-col>
-            <ion-button [routerLink]="['/navigation/tabs/args', unit.id, 'reschedule']" expand="block" fill="outline">
-              <ion-icon name="time"></ion-icon><ion-label>Reschedule</ion-label>
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-button [routerLink]="['/navigation/tabs/args', unit.id, 'edit']" expand="block" fill="outline">
+            <ion-icon name="create"></ion-icon>
+            <ion-label>Edit</ion-label>
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button [routerLink]="['/navigation/tabs/args', unit.id, 'reschedule']" expand="block" fill="outline">
+            <ion-icon name="time"></ion-icon>
+            <ion-label>Reschedule</ion-label>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-card>
 </ion-content>

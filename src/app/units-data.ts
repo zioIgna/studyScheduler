@@ -10,4 +10,5 @@ export interface UnitsData {
     overdueDates: boolean;
     title: string;
     today: string;
+    notes?: string
 }
