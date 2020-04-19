@@ -3,6 +3,7 @@ import { UnitComponent } from '../unit/unit.component';
 import { ManagementService } from '../management.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonRadioGroup, AlertController } from '@ionic/angular';
+import { DeadlineStatus } from '../deadlineStatus.model';
 
 @Component({
   selector: 'app-reschedule-unit',
@@ -62,19 +63,24 @@ export class RescheduleUnitPage implements OnInit {
       new Date(this.newDateStr).getFullYear(),
       new Date(this.newDateStr).getMonth(),
       new Date(this.newDateStr).getDate(),
-      12
+      12, 0, 0, 0
     );
     if (shiftingDate >= newDate) {
       let message = 'The new date must be greater than the selected one';
       this.showAlert(message);
       console.log('La nuova data non è valida', newDate);
     } else {
+      let today = new Date();
       let daysDiff = (newDate.getTime() - shiftingDate.getTime()) / (1000 * 3600 * 24);
       for (let i = this.selectedValue; i < this.unit.appuntamenti.length; i++) {
         let currDate = this.unit.appuntamenti[i].giorno;
         let updDate = this.addDays(currDate, daysDiff);
         this.unit.appuntamenti[i].giorno = updDate;
         console.log('valore del nuovo appuntamento: ', this.unit.appuntamenti[i].giorno);
+        if(updDate > today){
+          this.unit.appuntamenti[i].status = DeadlineStatus.Due;
+          console.log('status del nuovo appuntamento: ', this.unit.appuntamenti[i].status);
+        }
       }
       this.managementSrv.rescheduleDates(this.unit.id, this.unit.appuntamenti).subscribe(
         res => {

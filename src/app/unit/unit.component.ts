@@ -22,11 +22,14 @@ export class UnitComponent {
     public appuntamenti: Scadenza[],
   ) {
     const today = new Date();
+    today.setHours(12, 0, 0, 0);
     this.nextDate = appuntamenti.find(function (appuntamento) {
-      return (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())) >= 0;
+      // return (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())) >= 0;
+      return (new Date (appuntamento.giorno) >= today);
     });
     this.pastDates = appuntamenti.filter(app =>
-      Date.UTC(new Date(app.giorno).getFullYear(), new Date(app.giorno).getMonth(), new Date(app.giorno).getDate()) < Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
+      // Date.UTC(new Date(app.giorno).getFullYear(), new Date(app.giorno).getMonth(), new Date(app.giorno).getDate()) < Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
+      new Date(app.giorno) < today
     );
     for (let pastDate of this.pastDates) {
       if (pastDate.status == 'DUE') {

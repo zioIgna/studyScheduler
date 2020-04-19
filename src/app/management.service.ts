@@ -312,7 +312,7 @@ export class ManagementService implements OnInit {
   resetDates(unit: UnitComponent) {
     let fetchedUserId: string;
     let appuntamenti: Scadenza[] = [];
-    const newDate = new Date(unit.createdOn.getFullYear(), unit.createdOn.getMonth(), unit.createdOn.getDate(), 12);
+    const newDate = new Date(unit.createdOn.getFullYear(), unit.createdOn.getMonth(), unit.createdOn.getDate(), 12, 0, 0, 0);
     console.log('new date is: ', newDate);
     const in2days = new Date(newDate.getTime() + 1000 * 60 * 60 * 24 * 2);
     const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
@@ -374,7 +374,11 @@ export class ManagementService implements OnInit {
             let myAppuntamenti: Scadenza[] = [];
             for (let appuntamento of resData[key].appuntamenti) {
               let today = new Date();
-              if (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getDate(), today.getMonth(), today.getDate()) < 0) {
+              today.setHours(12, 0, 0, 0);
+              // if (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getDate(), today.getMonth(), today.getDate()) < 0)
+              // if (new Date(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate(), 12) < new Date(today.getDate(), today.getMonth(), today.getDate(), 12))
+              if (appuntamento.giorno < today)
+              {
                 appuntamento.status = DeadlineStatus.Overdue;
               }
               myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));
