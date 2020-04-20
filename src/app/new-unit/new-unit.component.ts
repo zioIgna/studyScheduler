@@ -4,6 +4,8 @@ import { ManagementService } from '../management.service';
 import { Book } from '../Book';
 import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { Question } from '../question.model';
+import { difficultyLevel } from '../difficultyLevel';
 
 @Component({
   selector: 'app-new-unit',
@@ -14,6 +16,8 @@ export class NewUnitComponent implements OnInit, OnDestroy {
 
   private _books: Book[];
   private booksSub: Subscription;
+  private questions: Question[] = [];
+  private singleQuestion: string;
 
   constructor(private managementSrv: ManagementService, private modalCtrl: ModalController) { }
 
@@ -25,11 +29,24 @@ export class NewUnitComponent implements OnInit, OnDestroy {
     this.modalCtrl.dismiss();
   }
 
+  onAddQuestion() {
+    if (this.singleQuestion && this.singleQuestion !== "") {
+      let newQuestion = new Question(this.singleQuestion, difficultyLevel.easy, this.questions.length);
+      this.questions.push(newQuestion);
+      this.singleQuestion = null;
+      console.log('Ho inviato la domanda ', newQuestion);
+    }
+  }
+
+  trackByFn(index, item) {
+    return index;
+  }
+
   ngOnInit() {
     // this._books = this.managementSrv.books;
-      this.managementSrv.fetchBooks().subscribe(res => {
-        this._books = res;
-      });
+    this.managementSrv.fetchBooks().subscribe(res => {
+      this._books = res;
+    });
     this.booksSub = this.managementSrv.books.subscribe(res => {
       this._books = res;
     })

@@ -42,7 +42,7 @@
       <p *ngIf="unit?.overdueDates">You have one or more overdue dates pending...</p>
       <p *ngIf="!unit?.overdueDates && !unit?.nextDate">Task completed!</p>
       <!-- </div> -->
-      <br>
+      <br *ngIf="unit?.notes">
       <ion-item *ngIf="unit?.notes">
         <ion-label>NOTES</ion-label>
         <p>{{unit?.notes}}</p>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Scadenza } from '../scadenza.model';
 import { DeadlineStatus } from '../deadlineStatus.model';
+import { Question } from '../question.model';
 
 @Component({
   selector: 'app-unit',
@@ -20,7 +21,8 @@ export class UnitComponent {
     public chapterTo: string,
     public createdOn: Date,
     public appuntamenti: Scadenza[],
-    public notes: string
+    public notes: string,
+    public questions: Question[]
   ) {
     const today = new Date();
     today.setHours(12, 0, 0, 0);
