@@ -22,7 +22,7 @@ export class NewUnitComponent implements OnInit, OnDestroy {
   constructor(private managementSrv: ManagementService, private modalCtrl: ModalController) { }
 
   onCreateUnit(form: NgForm) {
-    this.managementSrv.addUnit(form).subscribe(res => {
+    this.managementSrv.addUnit(form, this.questions).subscribe(res => {
       console.log('Aggiunta nuova unit ', res);
 
     });

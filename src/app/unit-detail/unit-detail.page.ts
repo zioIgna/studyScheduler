@@ -33,7 +33,7 @@ export class UnitDetailPage implements OnInit, OnDestroy {
         myApp.status = DeadlineStatus.Overdue;
       }
       this.managementSrv.updateUnit(this.unit).subscribe((res: UnitsData) => {
-        this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti, res.notes);
+        this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti, res.notes, res.questions);
       });
       console.log('dopo switchstatus, la unit è: ', this.unit);
     } else if (this.sameDay(new Date(myApp.giorno))) {
@@ -45,7 +45,7 @@ export class UnitDetailPage implements OnInit, OnDestroy {
       }
       console.log('sto passando questa unit allo update: ', this.unit);
       this.managementSrv.updateUnit(this.unit).subscribe((res: UnitsData) => {
-        this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti, res.notes);
+        this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti, res.notes, res.questions);
       });
     }
   }

@@ -51,7 +51,7 @@
         <ion-list-header>Questions</ion-list-header>
         <ion-item *ngFor="let question of unit?.questions"
           [color]="question.difficulty == 'EASY' ? 'green' : question.difficulty == 'MEDIUM' ? 'yellow' : 'danger'">
-          {{question}}</ion-item>
+          {{question.text}}</ion-item>
       </ion-list>
     </ion-card-content>
     <!-- <ion-tab-button [routerLink]="['/navigation/tabs/args', unit.title, 'edit']"> -->

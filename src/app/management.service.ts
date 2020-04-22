@@ -13,6 +13,7 @@ import { today } from './globals';
 import { UnitsData } from './units-data';
 import { IBookData } from './ibook-data';
 import { AuthenticationService } from './auth/authentication.service';
+import { Question } from './question.model';
 
 // interface unitsData {
 //   appuntamenti: Scadenza[];
@@ -194,7 +195,7 @@ export class ManagementService implements OnInit {
     // )
   }
 
-  addUnit(form: NgForm) {
+  addUnit(form: NgForm, questions: Question[]) {
     let generatedId: string;
     const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12);
     console.log('today is: ', today);
@@ -218,7 +219,8 @@ export class ManagementService implements OnInit {
         new Scadenza(add13days, DeadlineStatus.Due),
         new Scadenza(add20days, DeadlineStatus.Due)
       ],
-      form.value.notes
+      form.value.notes,
+      questions
     );
     let fetchedUserId: string;
     return this.authService.userId.pipe(
@@ -250,7 +252,7 @@ export class ManagementService implements OnInit {
     )
   }
 
-  editUnit(form: NgForm, unitId: string) {
+  editUnit(form: NgForm, unitId: string, newQuestions: Question[]) {
     let fetchedUserId: string;
     let editedUnit: UnitComponent;
     let updFields = {
@@ -258,7 +260,8 @@ export class ManagementService implements OnInit {
       libro: form.value.libro,
       chapterFrom: form.value.chapterFrom,
       chapterTo: form.value.chapterTo,
-      notes: form.value.notes
+      notes: form.value.notes,
+      questions: newQuestions
     };
     return this.authService.userId.pipe(
       take(1),
@@ -393,7 +396,8 @@ export class ManagementService implements OnInit {
               resData[key].chapterTo,
               new Date(resData[key].createdOn),
               myAppuntamenti,
-              resData[key].notes
+              resData[key].notes,
+              resData[key].questions
             ))
           }
         }
@@ -472,7 +476,7 @@ export class ManagementService implements OnInit {
         const updatedUnitIndex = units.findIndex(un => un.id === myUnit.id);
         updatedUnits = [...units];
         const oldUnit = updatedUnits[updatedUnitIndex];
-        updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti, myUnit.notes);
+        updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti, myUnit.notes, myUnit.questions);
         return this.http.put(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${myUnit.id}.json?auth=${fetchedToken}`,
           { ...myUnit, id: null }
         );

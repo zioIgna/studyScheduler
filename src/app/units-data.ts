@@ -1,4 +1,5 @@
 import { Scadenza } from './scadenza.model';
+import { Question } from './question.model';
 
 export interface UnitsData {
     appuntamenti: Scadenza[];
@@ -10,5 +11,6 @@ export interface UnitsData {
     overdueDates: boolean;
     title: string;
     today: string;
-    notes?: string
+    notes?: string;
+    questions?: Question[]
 }
