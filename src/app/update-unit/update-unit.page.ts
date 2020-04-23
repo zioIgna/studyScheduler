@@ -18,6 +18,7 @@ export class UpdateUnitPage implements OnInit, OnDestroy {
   unit: UnitComponent;
   unitId: string;
   singleQuestion: string = null;
+  tempQuestions: Question[] = [];
 
   private _books: Book[];
   private booksSub: Subscription;
@@ -25,24 +26,30 @@ export class UpdateUnitPage implements OnInit, OnDestroy {
   constructor(private managementSrv: ManagementService, private route: ActivatedRoute, private router: Router) { }
 
   onEditUnit(form: NgForm) {
-    this.managementSrv.editUnit(form, this.unitId, this.unit.questions).subscribe(res => {
+    this.managementSrv.editUnit(form, this.unitId, this.tempQuestions).subscribe(res => {
       console.log("Allo edit della untià ho ottenuto: ", res);
       this.router.navigate(['/navigation/tabs/args', this.unitId]);
     });
   }
 
-  onMoveUp(index: number){
+  onMoveUp(index: number) {
+    if (index > 0) {
+      [this.tempQuestions[index - 1], this.tempQuestions[index]] = [this.tempQuestions[index], this.tempQuestions[index - 1]];
+    }
     console.log('Muovo in su lo indice: ', index);
   }
-  
-  onMoveDown(index: number){
+
+  onMoveDown(index: number) {
+    if (index < this.tempQuestions.length - 1) {
+      [this.tempQuestions[index], this.tempQuestions[index + 1]] = [this.tempQuestions[index + 1], this.tempQuestions[index]];
+    }
     console.log('Muovo in giù lo indice: ', index);
   }
 
   onAddQuestion() {
     if (this.singleQuestion && this.singleQuestion !== "") {
       let newQuestion = new Question(this.singleQuestion, difficultyLevel.easy, this.unit.questions.length);
-      this.unit.questions.push(newQuestion);
+      this.tempQuestions.push(newQuestion);
       this.singleQuestion = null;
       console.log('Ho inviato la domanda ', newQuestion);
     }
@@ -55,6 +62,7 @@ export class UpdateUnitPage implements OnInit, OnDestroy {
     console.log('unitId: ', this.unitId);
     this.managementSrv.getUnitById(this.unitId).subscribe(myUnit => {
       this.unit = myUnit;
+      this.tempQuestions = [...this.unit.questions];
     });
     this.managementSrv.fetchBooks().subscribe(res => {
       this._books = res;
@@ -68,6 +76,7 @@ export class UpdateUnitPage implements OnInit, OnDestroy {
     if (this.booksSub) {
       this.booksSub.unsubscribe();
     }
+    this.tempQuestions = [];
   }
 
 }

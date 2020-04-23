@@ -54,16 +54,16 @@
       </ion-row>
       <ion-list>
         <ion-list-header>Questions</ion-list-header>
-        <ion-item *ngFor="let question of unit.questions; let i = index; trackBy: trackByFn">
+        <ion-item *ngFor="let question of tempQuestions; let i = index; trackBy: trackByFn">
           <ion-button (click)="onDeleteQuestion(i)" fill="clear" color="danger">
             <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
           </ion-button>
           {{question.text}}
           <ion-buttons slot="end">
-            <ion-button (click)="onMoveUp(i)">
+            <ion-button (click)="onMoveUp(i)" [disabled]="i==0">
               <ion-icon color="primary" name="arrow-dropup-circle"></ion-icon>
             </ion-button>
-            <ion-button (click)="onMoveDown(i)">
+            <ion-button (click)="onMoveDown(i)" [disabled]="i==tempQuestions.length-1">
               <ion-icon color="primary" name="arrow-dropdown-circle"></ion-icon>
             </ion-button>
           </ion-buttons>
