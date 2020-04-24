@@ -31,7 +31,7 @@ export class NewUnitComponent implements OnInit, OnDestroy {
 
   onAddQuestion() {
     if (this.singleQuestion && this.singleQuestion !== "") {
-      let newQuestion = new Question(this.singleQuestion, difficultyLevel.easy, this.questions.length);
+      let newQuestion = new Question(this.singleQuestion, difficultyLevel.easy);
       this.questions.push(newQuestion);
       this.singleQuestion = null;
       console.log('Ho inviato la domanda ', newQuestion);

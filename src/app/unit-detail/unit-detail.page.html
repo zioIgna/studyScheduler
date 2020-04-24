@@ -49,9 +49,11 @@
       </ion-item>
       <ion-list *ngIf="unit.questions">
         <ion-list-header>Questions</ion-list-header>
-        <ion-item *ngFor="let question of unit?.questions"
-          [color]="question.difficulty == 'EASY' ? 'green' : question.difficulty == 'MEDIUM' ? 'yellow' : 'danger'">
-          {{question.text}}</ion-item>
+        <ion-item *ngFor="let question of unit?.questions; let i = index" (click)="onSwitchDifficulty(i)">
+          <ion-icon name="radio-button-on" slot="start"
+          [color]="question.difficulty == 'EASY' ? 'success' : question.difficulty == 'MEDIUM' ? 'warning' : 'danger'"></ion-icon>
+          {{question.text}}
+        </ion-item>
       </ion-list>
     </ion-card-content>
     <!-- <ion-tab-button [routerLink]="['/navigation/tabs/args', unit.title, 'edit']"> -->

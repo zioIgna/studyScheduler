@@ -6,6 +6,7 @@ import { DeadlineStatus } from '../deadlineStatus.model';
 import { Subscription, Subject } from 'rxjs';
 import { UnitsData } from '../units-data';
 import { HttpClient } from '@angular/common/http';
+import { difficultyLevel } from '../difficultyLevel';
 
 @Component({
   selector: 'app-unit-detail',
@@ -48,6 +49,17 @@ export class UnitDetailPage implements OnInit, OnDestroy {
         this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti, res.notes, res.questions);
       });
     }
+  }
+
+  onSwitchDifficulty(index: number) {
+    let diffLev = this.unit.questions[index].difficulty;
+    console.log('il diffLev è: ', diffLev);
+    diffLev == difficultyLevel.easy ? diffLev = difficultyLevel.medium : diffLev == difficultyLevel.medium ? diffLev = difficultyLevel.hard : diffLev = difficultyLevel.easy;
+    this.unit.questions[index].difficulty = diffLev;
+    console.log('il diffLev è: ', diffLev);
+    this.managementSrv.updateUnit(this.unit).subscribe((res: UnitsData) => {
+      this.unit = new UnitComponent(this.unit.id, res.title, res.libro, res.chapterFrom, res.chapterTo, new Date(res.createdOn), res.appuntamenti, res.notes, res.questions);
+    });
   }
 
   onEditCard() {

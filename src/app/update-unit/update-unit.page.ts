@@ -48,21 +48,25 @@ export class UpdateUnitPage implements OnInit, OnDestroy {
 
   onAddQuestion() {
     if (this.singleQuestion && this.singleQuestion !== "") {
-      let newQuestion = new Question(this.singleQuestion, difficultyLevel.easy, this.unit.questions.length);
+      let newQuestion = new Question(this.singleQuestion, difficultyLevel.easy);
       this.tempQuestions.push(newQuestion);
       this.singleQuestion = null;
       console.log('Ho inviato la domanda ', newQuestion);
     }
   }
 
-  onDeleteQuestion(index: number) { }
+  onDeleteQuestion(index: number) {
+    this.tempQuestions.splice(index, 1);
+  }
 
   ngOnInit() {
     this.unitId = this.route.snapshot.params['unitId'];
     console.log('unitId: ', this.unitId);
     this.managementSrv.getUnitById(this.unitId).subscribe(myUnit => {
       this.unit = myUnit;
-      this.tempQuestions = [...this.unit.questions];
+      if (this.unit.questions) {
+        this.tempQuestions = [...this.unit.questions];
+      }
     });
     this.managementSrv.fetchBooks().subscribe(res => {
       this._books = res;
