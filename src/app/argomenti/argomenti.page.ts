@@ -17,6 +17,9 @@ import { Router } from '@angular/router';
 export class ArgomentiPage implements OnInit, OnDestroy {
   private unitList: UnitComponent[];
   private futureDatesUnits: UnitComponent[];
+  private todayUnits: UnitComponent[];
+  private tomorrowUnits: UnitComponent[];
+  private thisWeekUnits: UnitComponent[];
   private pastDatesUnits: UnitComponent[];
   private unitsSub: Subscription;
   private userIdTokenSub: Subscription;
@@ -93,6 +96,7 @@ export class ArgomentiPage implements OnInit, OnDestroy {
       console.log('ora le futureUnits non ordinate sono: ', futureUnits);
       futureUnits.sort((unitA, unitB) => (new Date(unitA.nextDate.giorno) < new Date(unitB.nextDate.giorno) ? -1 : 1));
       console.log('ora le futureUnits ordinate sono: ', futureUnits);
+      this.todayUnits = futureUnits.filter(unit => new Date(unit.nextDate.giorno).setHours(12, 0, 0, 0) == new Date().setHours(12, 0, 0, 0));
       this.pastDatesUnits = units.filter(unit => unit.nextDate == undefined);
       this.pastDatesUnits.sort((unitA, unitB) => (unitA.appuntamenti[unitA.appuntamenti.length - 1].giorno > unitB.appuntamenti[unitB.appuntamenti.length - 1].giorno) ? -1 : 1);
       console.log('futureUnits ordinati sono: ', futureUnits);
