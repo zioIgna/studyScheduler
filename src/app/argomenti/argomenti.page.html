@@ -12,7 +12,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-list-header lines="inset" *ngIf="todayUnits">
+    <ion-list-header lines="inset" *ngIf="todayUnits.length > 0">
       <ion-label><i>TODAY</i></ion-label>
     </ion-list-header>
     <ion-card *ngFor="let unit of todayUnits" [routerLink]="['/','navigation','tabs','args',unit.id]">
@@ -39,10 +39,37 @@
         </div>
       </ion-card-content>
     </ion-card>
+    <ion-list-header lines="inset" *ngIf="tomorrowUnits.length > 0">
+      <ion-label><i>TOMORROW</i></ion-label>
+    </ion-list-header>
+    <ion-card *ngFor="let unit of tomorrowUnits" [routerLink]="['/','navigation','tabs','args',unit.id]">
+      <ion-card-header>
+        <ion-card-subtitle>
+          <ion-label style="float:left">{{unit.title}}
+            <ion-badge *ngIf="unit?.pastDates != undefined" [color]="unit?.overdueDates ? 'danger' : unit?.nextDate == undefined ? 'primary' : 'secondary' ">
+              <ion-icon [name]="unit.overdueDates ? 'close' : 'checkmark'"></ion-icon>
+            </ion-badge>
+          </ion-label>
+          <ion-label style="float:right">{{unit.createdOn | date}}</ion-label>
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-item detail>
+        <ion-icon slot="start" name="bookmark"></ion-icon>
+        <ion-label><i>da </i><b>{{unit.chapterFrom}}</b><i> a </i><b>{{unit.chapterTo}}</b></ion-label>
+      </ion-item>
+      <ion-card-content>
+        <ion-label class="ion-text-center ion-text-uppercase"><h2><b>{{unit.libro}}</b></h2></ion-label>
+        <p *ngIf="unit?.nextDate">nextDate: {{unit.nextDate?.giorno | date}}</p>
+        <div *ngIf="unit?.nextDate == undefined">
+          <p *ngIf="unit?.overdueDates">You have one or more overdue dates pending...</p>
+          <p *ngIf="!unit?.overdueDates">Task completed!</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
     <ion-list-header lines="inset">
       <ion-label><i>NEXT DAYS</i></ion-label>
     </ion-list-header>
-    <ion-card *ngFor="let unit of unitList" [routerLink]="['/','navigation','tabs','args',unit.id]">
+    <ion-card *ngFor="let unit of nextDaysUnits" [routerLink]="['/','navigation','tabs','args',unit.id]">
       <ion-card-header>
         <ion-card-subtitle>
           <ion-label style="float:left">{{unit.title}}
@@ -68,6 +95,33 @@
               [color]="date.status == 'DUE' ? 'secondary' : date.status == 'OVERDUE' ? 'danger' : 'primary'">.
             </ion-badge>
           </p> -->
+          <p *ngIf="unit?.overdueDates">You have one or more overdue dates pending...</p>
+          <p *ngIf="!unit?.overdueDates">Task completed!</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    <ion-list-header lines="inset" *ngIf="pastDatesUnits.length > 0">
+      <ion-label><i>PAST DATES</i></ion-label>
+    </ion-list-header>
+    <ion-card *ngFor="let unit of pastDatesUnits" [routerLink]="['/','navigation','tabs','args',unit.id]">
+      <ion-card-header>
+        <ion-card-subtitle>
+          <ion-label style="float:left">{{unit.title}}
+            <ion-badge *ngIf="unit?.pastDates != undefined" [color]="unit?.overdueDates ? 'danger' : unit?.nextDate == undefined ? 'primary' : 'secondary' ">
+              <ion-icon [name]="unit.overdueDates ? 'close' : 'checkmark'"></ion-icon>
+            </ion-badge>
+          </ion-label>
+          <ion-label style="float:right">{{unit.createdOn | date}}</ion-label>
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-item detail>
+        <ion-icon slot="start" name="bookmark"></ion-icon>
+        <ion-label><i>da </i><b>{{unit.chapterFrom}}</b><i> a </i><b>{{unit.chapterTo}}</b></ion-label>
+      </ion-item>
+      <ion-card-content>
+        <ion-label class="ion-text-center ion-text-uppercase"><h2><b>{{unit.libro}}</b></h2></ion-label>
+        <p *ngIf="unit?.nextDate">nextDate: {{unit.nextDate?.giorno | date}}</p>
+        <div *ngIf="unit?.nextDate == undefined">
           <p *ngIf="unit?.overdueDates">You have one or more overdue dates pending...</p>
           <p *ngIf="!unit?.overdueDates">Task completed!</p>
         </div>
