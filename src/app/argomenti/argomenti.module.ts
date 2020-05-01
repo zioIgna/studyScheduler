@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { ArgomentiPage } from './argomenti.page';
 import { NewBookComponent } from '../new-book/new-book.component';
 import { NewUnitComponent } from '../new-unit/new-unit.component';
+import { UnitItemComponent } from './unit-item/unit-item.component';
 
 const routes: Routes = [
   {
@@ -23,7 +24,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ArgomentiPage, NewBookComponent, NewUnitComponent],
+  declarations: [ArgomentiPage, NewBookComponent, NewUnitComponent, UnitItemComponent],
   entryComponents: [NewBookComponent, NewUnitComponent]
 })
 export class ArgomentiPageModule {}
