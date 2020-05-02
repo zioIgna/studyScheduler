@@ -12,6 +12,10 @@ export class UnitItemComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {}
+  onArchive(unitItemId: string) {
+    console.log("Archiving unit", this.unitItem.title);
+  }
+
+  ngOnInit() { }
 
 }

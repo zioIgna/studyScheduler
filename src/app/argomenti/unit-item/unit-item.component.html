@@ -1,24 +1,52 @@
-<ion-card [routerLink]="['/','navigation','tabs','args',unitItem.id]">
-  <ion-card-header>
-    <ion-card-subtitle>
-      <ion-label style="float:left">{{unitItem.title}}
-        <ion-badge *ngIf="unitItem?.pastDates != undefined" [color]="unitItem?.overdueDates ? 'danger' : unitItem?.nextDate == undefined ? 'primary' : 'secondary' ">
-          <ion-icon [name]="unitItem.overdueDates ? 'close' : 'checkmark'"></ion-icon>
-        </ion-badge>
-      </ion-label>
-      <ion-label style="float:right">{{unitItem.createdOn | date}}</ion-label>
-    </ion-card-subtitle>
-  </ion-card-header>
-  <ion-item detail>
-    <ion-icon slot="start" name="bookmark"></ion-icon>
-    <ion-label><i>da </i><b>{{unitItem.chapterFrom}}</b><i> a </i><b>{{unitItem.chapterTo}}</b></ion-label>
-  </ion-item>
-  <ion-card-content>
-    <ion-label class="ion-text-center ion-text-uppercase"><h2><b>{{unitItem.libro}}</b></h2></ion-label>
-    <p *ngIf="unitItem?.nextDate">nextDate: {{unitItem.nextDate?.giorno | date}}</p>
-    <div *ngIf="unitItem?.nextDate == undefined">
-      <p *ngIf="unitItem?.overdueDates">You have one or more overdue dates pending...</p>
-      <p *ngIf="!unitItem?.overdueDates">Task completed!</p>
-    </div>
-  </ion-card-content>
+<ion-card>
+  <ion-item-sliding>
+    <ion-item [routerLink]="['/','navigation','tabs','args',unitItem.id]">
+      <ion-icon slot="start" name="bookmark"></ion-icon>
+      <ion-grid>
+        <ion-row no-margin>
+          <ion-col>
+            <ion-label>
+              <ion-badge *ngIf="unitItem?.pastDates != undefined"
+                [color]="unitItem?.overdueDates ? 'danger' : unitItem?.nextDate == undefined ? 'primary' : 'secondary' ">
+                <ion-icon [name]="unitItem.overdueDates ? 'close' : 'checkmark'"></ion-icon>
+              </ion-badge>
+              {{unitItem.title}}
+            </ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row no-margin>
+          <ion-col>
+            <p no-margin><i>da </i><b>{{unitItem.chapterFrom}}</b><i> a </i><b>{{unitItem.chapterTo}}</b></p>
+          </ion-col>
+          <ion-col>
+            <p no-margin class="ion-text-right" style="font-size: small"><i>{{unitItem.createdOn | date}}</i>
+            </p>
+          </ion-col>
+        </ion-row>
+        <ion-row no-margin>
+          <ion-label no-margin class="ion-text-center ion-text-uppercase">
+            <h2><b>{{unitItem.libro}}</b></h2>
+          </ion-label>
+        </ion-row>
+        <ion-row no-margin>
+          <ion-col>
+            <p no-margin *ngIf="unitItem?.nextDate">
+              <ion-icon name="calendar" color="primary"></ion-icon><i> Next date:</i>
+              {{unitItem.nextDate?.giorno | date}}
+            </p>
+            <div *ngIf="unitItem?.nextDate == undefined">
+              <p no-margin *ngIf="unitItem?.overdueDates">You have one or more overdue dates pending...</p>
+              <p no-margin *ngIf="!unitItem?.overdueDates">Task completed!</p>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+    <ion-item-options>
+      <ion-item-option color="warning" (click)="onArchive(unitItem.id)">
+        Archive
+        <ion-icon name="archive" slot="top"></ion-icon>
+      </ion-item-option>
+    </ion-item-options>
+  </ion-item-sliding>
 </ion-card>
