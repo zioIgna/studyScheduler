@@ -220,7 +220,8 @@ export class ManagementService implements OnInit {
         new Scadenza(add20days, DeadlineStatus.Due)
       ],
       form.value.notes,
-      questions
+      questions,
+      false
     );
     let fetchedUserId: string;
     return this.authService.userId.pipe(
@@ -397,7 +398,8 @@ export class ManagementService implements OnInit {
               new Date(resData[key].createdOn),
               myAppuntamenti,
               resData[key].notes,
-              resData[key].questions
+              resData[key].questions,
+              resData[key].isArchived ? resData[key].isArchived : false
             ))
           }
         }
@@ -476,7 +478,7 @@ export class ManagementService implements OnInit {
         const updatedUnitIndex = units.findIndex(un => un.id === myUnit.id);
         updatedUnits = [...units];
         const oldUnit = updatedUnits[updatedUnitIndex];
-        updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti, myUnit.notes, myUnit.questions);
+        updatedUnits[updatedUnitIndex] = new UnitComponent(myUnit.id, myUnit.title, myUnit.libro, myUnit.chapterFrom, myUnit.chapterTo, myUnit.createdOn, myUnit.appuntamenti, myUnit.notes, myUnit.questions, myUnit.isArchived);
         return this.http.put(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${myUnit.id}.json?auth=${fetchedToken}`,
           { ...myUnit, id: null }
         );

@@ -21,9 +21,11 @@ export class ArgomentiPage implements OnInit, OnDestroy {
   private tomorrowUnits: UnitComponent[];
   private nextDaysUnits: UnitComponent[];
   private pastDatesUnits: UnitComponent[];
+  private archivedUnits: UnitComponent[];
   private unitsSub: Subscription;
   private userIdTokenSub: Subscription;
   private userIdToken: string;
+  private showArchived = false;
 
   constructor(
     private modalCtrl: ModalController,
@@ -85,6 +87,10 @@ export class ArgomentiPage implements OnInit, OnDestroy {
     // });
   }
 
+  onShowArchived() {
+    this.showArchived = !this.showArchived;
+  }
+
   ngOnInit() {
     this.managementSrv.fetchUnits().pipe(take(1)).subscribe(newUnits => {
       for (let singleUnit of newUnits) {
@@ -92,7 +98,9 @@ export class ArgomentiPage implements OnInit, OnDestroy {
       }
     });
     this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
-      let futureUnits = units.filter(unit => unit.nextDate != undefined);
+      this.archivedUnits = units.filter(unit => unit.isArchived == true);
+      let nonArchivedUnits = units.filter(unit => !this.archivedUnits.includes(unit));
+      let futureUnits = nonArchivedUnits.filter(unit => unit.nextDate != undefined);
       console.log('ora le futureUnits non ordinate sono: ', futureUnits);
       futureUnits.sort((unitA, unitB) => (new Date(unitA.nextDate.giorno) < new Date(unitB.nextDate.giorno) ? -1 : 1));
       console.log('ora le futureUnits ordinate sono: ', futureUnits);
@@ -102,8 +110,9 @@ export class ArgomentiPage implements OnInit, OnDestroy {
       let tomorrow = tomorrowDate.setHours(12, 0, 0, 0);
       this.tomorrowUnits = futureUnits.filter(unit => new Date(unit.nextDate.giorno).setHours(12, 0, 0, 0) == tomorrow);
       this.nextDaysUnits = futureUnits.filter(unit => !this.todayUnits.includes(unit) && !this.tomorrowUnits.includes(unit));
-      this.pastDatesUnits = units.filter(unit => unit.nextDate == undefined);
+      this.pastDatesUnits = nonArchivedUnits.filter(unit => unit.nextDate == undefined);
       this.pastDatesUnits.sort((unitA, unitB) => (unitA.appuntamenti[unitA.appuntamenti.length - 1].giorno > unitB.appuntamenti[unitB.appuntamenti.length - 1].giorno) ? -1 : 1);
+      this.archivedUnits.sort((unitA, unitB) => (unitA.appuntamenti[unitA.appuntamenti.length - 1].giorno > unitB.appuntamenti[unitB.appuntamenti.length - 1].giorno) ? -1 : 1);
       console.log('futureUnits ordinati sono: ', futureUnits);
       console.log('pastDatesUnits ordinati sono: ', this.pastDatesUnits);
       // this.unitList = units;

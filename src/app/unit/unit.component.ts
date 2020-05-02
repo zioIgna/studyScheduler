@@ -22,7 +22,8 @@ export class UnitComponent {
     public createdOn: Date,
     public appuntamenti: Scadenza[],
     public notes: string,
-    public questions: Question[]
+    public questions: Question[],
+    public isArchived: boolean
   ) {
     const today = new Date();
     today.setHours(12, 0, 0, 0);

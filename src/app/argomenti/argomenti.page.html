@@ -1,5 +1,5 @@
-<ion-header >
-  <ion-toolbar >
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="end">
       <ion-button (click)="onLogout()">
         <ion-icon slot="end" name="log-out"></ion-icon>
@@ -13,21 +13,30 @@
 <ion-content>
   <ion-list>
     <ion-list-header lines="inset" *ngIf="todayUnits.length > 0">
-      <ion-label><i>TODAY</i></ion-label>
+      <ion-label color="primary"><b><i>TODAY</i></b></ion-label>
     </ion-list-header>
     <app-unit-item *ngFor="let item of todayUnits" [unitItem]="item"></app-unit-item>
     <ion-list-header lines="inset" *ngIf="tomorrowUnits.length > 0">
-      <ion-label><i>TOMORROW</i></ion-label>
+      <ion-label color="primary"><b><i>TOMORROW</i></b></ion-label>
     </ion-list-header>
     <app-unit-item *ngFor="let item of tomorrowUnits" [unitItem]="item"></app-unit-item>
-    <ion-list-header lines="inset">
-      <ion-label><i>NEXT DAYS</i></ion-label>
+    <ion-list-header lines="inset" *ngIf="nextDaysUnits.length > 0">
+      <ion-label color="primary"><b><i>NEXT DAYS</i></b></ion-label>
     </ion-list-header>
     <app-unit-item *ngFor="let item of nextDaysUnits" [unitItem]="item"></app-unit-item>
     <ion-list-header lines="inset" *ngIf="pastDatesUnits.length > 0">
-      <ion-label><i>PAST DATES</i></ion-label>
+      <ion-label color="primary"><b><i>PAST DATES</i></b></ion-label>
     </ion-list-header>
     <app-unit-item *ngFor="let item of pastDatesUnits" [unitItem]="item"></app-unit-item>
+    <ion-list-header lines="inset" *ngIf="archivedUnits.length > 0">
+      <ion-button fill="clear" (click)="onShowArchived()" no-margin no-padding>
+        <ion-icon [name]="showArchived ? 'arrow-dropup' : 'arrow-dropdown'"></ion-icon>
+        <ion-label color="primary" class="text-align-left"><b><i>  ARCHIVED</i></b></ion-label>
+      </ion-button>
+    </ion-list-header>
+    <div *ngIf="showArchived == true">
+      <app-unit-item *ngFor="let item of archivedUnits; trackBy: trackByFn" [unitItem]="item"></app-unit-item>
+    </div>
   </ion-list>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

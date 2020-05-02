@@ -12,5 +12,6 @@ export interface UnitsData {
     title: string;
     today: string;
     notes?: string;
-    questions?: Question[]
+    questions?: Question[];
+    isArchived?: boolean
 }

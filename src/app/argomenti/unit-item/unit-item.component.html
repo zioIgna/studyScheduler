@@ -16,7 +16,8 @@
         </ion-row>
         <ion-row no-margin>
           <ion-col>
-            <p no-margin><i>da </i><b>{{unitItem.chapterFrom}}</b><i> a </i><b>{{unitItem.chapterTo}}</b></p>
+            <ion-icon name="bookmarks" color="primary"></ion-icon>
+            <span no-margin><i> da </i><b>{{unitItem.chapterFrom}}</b><i> a </i><b>{{unitItem.chapterTo}}</b></span>
           </ion-col>
           <ion-col>
             <p no-margin class="ion-text-right" style="font-size: small"><i>{{unitItem.createdOn | date}}</i>
@@ -24,9 +25,11 @@
           </ion-col>
         </ion-row>
         <ion-row no-margin>
-          <ion-label no-margin class="ion-text-center ion-text-uppercase">
-            <h2><b>{{unitItem.libro}}</b></h2>
-          </ion-label>
+          <ion-col>
+            <span no-margin>
+              <ion-icon name="book" color="primary" slot="start"></ion-icon><b class="ion-text-center ion-text-uppercase"> {{unitItem.libro}}</b>
+            </span>
+          </ion-col>
         </ion-row>
         <ion-row no-margin>
           <ion-col>
@@ -43,9 +46,9 @@
       </ion-grid>
     </ion-item>
     <ion-item-options>
-      <ion-item-option color="warning" (click)="onArchive(unitItem.id)">
-        Archive
-        <ion-icon name="archive" slot="top"></ion-icon>
+      <ion-item-option color="warning" (click)="onArchive()">
+        <!-- Archive -->
+        <ion-icon [name]="unitItem.isArchived ? 'open': 'archive'" slot="icon-only"></ion-icon>
       </ion-item-option>
     </ion-item-options>
   </ion-item-sliding>
