@@ -383,8 +383,7 @@ export class ManagementService implements OnInit {
               today.setHours(12, 0, 0, 0);
               // if (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getDate(), today.getMonth(), today.getDate()) < 0)
               // if (new Date(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate(), 12) < new Date(today.getDate(), today.getMonth(), today.getDate(), 12))
-              if (appuntamento.giorno < today)
-              {
+              if (appuntamento.giorno < today) {
                 appuntamento.status = DeadlineStatus.Overdue;
               }
               myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));
@@ -485,6 +484,41 @@ export class ManagementService implements OnInit {
       }),
       tap((res) => {
         console.log('la risposta dopo lo update è: ', res);
+        this._unitlist.next(updatedUnits);
+      })
+    )
+  }
+
+  deleteUnit(myUnit: UnitComponent) {
+    let updatedUnits: UnitComponent[];
+    let fetchedUserId: string;
+    let fetchedToken: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(resUserId => {
+        if (!resUserId) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = resUserId;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        if (!token) {
+          throw new Error('Token not fount!');
+        }
+        fetchedToken = token;
+        return this.unitlist;
+      }),
+      take(1),
+      switchMap(units => {
+        console.log('queste sono le units ricevute allo updateUnit: ', units);
+        updatedUnits = [...units];
+        return this.http.delete(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${myUnit.id}.json?auth=${fetchedToken}`);
+      }),
+      tap((res) => {
+        console.log('la risposta dopo lo update è: ', res);
+        updatedUnits = updatedUnits.filter(unit => unit.id != myUnit.id);
         this._unitlist.next(updatedUnits);
       })
     )
