@@ -60,7 +60,10 @@
         <ion-item *ngFor="let question of questions; trackBy: trackByFn">{{question.text}}</ion-item>
       </ion-list>
       <ion-item>
-        <ion-button slot="end" (click)="onAddQuestion()"><ion-icon name="add-circle-outline"></ion-icon></ion-button>
+        <!-- <ion-button slot="end" (click)="onAddQuestion()"><ion-icon name="add-circle-outline"></ion-icon></ion-button> -->
+        <ion-button slot="end" fill="clear" (click)="onAddQuestion()" [disabled]="!singleQuestion || singleQuestion.trim().length === 0">
+          <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+        </ion-button>
         <!-- <ion-label position="floating">Add a new question</ion-label> -->
         <ion-input placeholder="Add a new question" name="newQuestion" type="text" [(ngModel)]="singleQuestion"></ion-input>
       </ion-item>
