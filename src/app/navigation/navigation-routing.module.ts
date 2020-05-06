@@ -52,6 +52,16 @@ const routes: Routes = [
                         ]
                 },
                 {
+                    path: 'settings',
+                    children:
+                    [
+                        {
+                            path: '',
+                            loadChildren: '../customization/customization.module#CustomizationPageModule'
+                        }
+                    ]
+                },
+                {
                     path: '',
                     redirectTo: '/navigation/tabs/args',
                     pathMatch: 'full'

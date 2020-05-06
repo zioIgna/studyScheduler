@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title slot="primary">settings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>
+      <ion-grid>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            Deadline #
+          </ion-col>
+          <ion-col class="ion-text-center">
+            Days interval
+          </ion-col>
+          <ion-col size="3"></ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-list-header>
+    <ion-item *ngFor="let item of deadlines; let i = index; trackBy: trackByFn">
+      <!-- Deadline n. {{i+1}}: {{item}} days from the previous one -->
+      <ion-grid>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            {{i+1}}
+          </ion-col>
+          <ion-col class="ion-text-center">
+            {{item}}
+          </ion-col>
+          <ion-col size="3">
+            <ion-buttons *ngIf="i == 0 && deadlines.length == 1">
+              <ion-button (click)="onSubDay()" fill="clear" color="primary" [disabled]="item == 0">
+                <ion-icon name="remove-circle"></ion-icon>
+              </ion-button>
+              <ion-button (click)="onAddDay()" fill="clear" color="primary">
+                <ion-icon name="add-circle"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-button *ngIf="i > 0 && i == deadlines.length-1" (click)="onDeleteDeadline()" fill="clear"
+              color="danger">
+              <ion-icon slot="end" name="close-circle-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <!-- <ion-buttons slot="end">
+        <ion-button (click)="onMoveUp(i)" [disabled]="i==0">
+          <ion-icon color="primary" name="arrow-dropup-circle"></ion-icon>
+        </ion-button>
+        <ion-button (click)="onMoveDown(i)" [disabled]="i==tempQuestions.length-1">
+          <ion-icon color="primary" name="arrow-dropdown-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons> -->
+    </ion-item>
+  </ion-list>
+  <ion-item>
+    <ion-input placeholder="#days till next deadline" name="newQuestion" type="number" [(ngModel)]="newDeadline"></ion-input>
+    <ion-button fill="clear" (click)="onAddDeadline()" [disabled]="!newDeadline || newDeadline === 0">
+      <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+    </ion-button>
+  </ion-item>
+</ion-content>
