@@ -7,10 +7,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CustomizationPage implements OnInit {
 
-  private deadlines: number[] = [2, 5, 7];
+  private actualDeadlines: number[] = [2, 5, 7];
+  private updDeadlines: number[];
+  private deadlines: number[];
   private newDeadline: number;
+  private editMode = false;
 
   constructor() { }
+
+  onSwitchEdit() {
+    this.editMode = !this.editMode;
+    if (this.editMode) {
+      this.deadlines = this.updDeadlines;
+    } else {
+      this.deadlines = this.actualDeadlines;
+      this.updDeadlines = [...this.actualDeadlines];
+      this.newDeadline = null;
+    }
+  }
 
   onAddDeadline() {
     if (this.newDeadline) {
@@ -35,7 +49,24 @@ export class CustomizationPage implements OnInit {
     }
   }
 
+  onSave() {
+    this.actualDeadlines = [...this.updDeadlines];
+    this.editMode = false;
+    this.newDeadline = null;
+  }
+
+  getVal(index: number) {
+    let currArray;
+    // if(this.editMode){
+    //   currArray = 
+    // }
+    currArray = this.deadlines.slice(0, index + 1);
+    return currArray.reduce((total, n) => total + n, 0);
+  }
+
   ngOnInit() {
+    this.updDeadlines = [...this.actualDeadlines];
+    this.deadlines = this.actualDeadlines;
   }
 
 }
