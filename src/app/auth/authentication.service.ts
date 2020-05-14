@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { tap, map } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
+import { tap, map, switchMap, take } from 'rxjs/operators';
+import { BehaviorSubject, of } from 'rxjs';
 import { User } from './user.model';
 
 export interface AuthResponseData {
@@ -56,7 +56,38 @@ export class AuthenticationService {
     return this.http.post<AuthResponseData>(
       `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey_authenticated}`,
       { email: email, password: password, returnSecureToken: true }
-    ).pipe(tap(this.setUserData.bind(this)));
+    ).pipe(tap(
+      this.setUserData.bind(this)
+      // res => {
+      //   this.setUserData.bind(this);
+      //   this.setStandardSettings.bind(this);
+      // }
+    ));
+  }
+
+  signUp2(email: string, password: string) {
+    let respData: AuthResponseData;
+    return this.http.post<AuthResponseData>(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey_authenticated}`,
+      { email: email, password: password, returnSecureToken: true }
+    ).pipe(
+      tap(this.setUserData.bind(this)),
+      tap(res => respData = res),
+      switchMap((res) => {
+        return this.setStandardSettings(res);
+        // const deadlines = [2, 5, 7, 13, 20];
+        // return this.http.put<number[]>(
+        //   `https://study-planner-w-authentication.firebaseio.com/users/${res.localId}/settings/deadlines.json?auth=${res.idToken}`,
+        //   deadlines
+        // );
+      }),
+      tap((res) =>
+        console.log('Eseguito il signup ', res)
+      ),
+      switchMap(res => {
+        return of(respData);
+      })
+    );
   }
 
   login(email: string, password: string) {
@@ -73,6 +104,55 @@ export class AuthenticationService {
   private setUserData(userData: AuthResponseData) {
     const expirationTime = new Date(new Date().getTime() + (+userData.expiresIn * 1000));
     this._user.next(new User(userData.localId, userData.email, userData.idToken, expirationTime));
+  }
+
+  setStandardSettings(userData: AuthResponseData) {
+    const deadlines = [2, 5, 7, 13, 20];
+    return this.http.put<number[]>(
+      `https://study-planner-w-authentication.firebaseio.com/users/${userData.localId}/settings/deadlines.json?auth=${userData.idToken}`,
+      deadlines
+    );
+  }
+
+  setCustomSettings(settings: number[]) {
+    let fetchedUserId;
+    let fetchedUserToken;
+    return this.userId.pipe(
+      take(1),
+      tap(res => fetchedUserId = res),
+      switchMap(res => { return this.userIdToken; }),
+      tap(res => fetchedUserToken = res),
+      switchMap(res => {
+        return this.http.put<number[]>(
+          `https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/settings/deadlines.json?auth=${fetchedUserToken}`,
+          settings
+        )
+      })
+    )
+  }
+
+  fetchUserDeadlines() {
+    // let currUser;
+    return this._user.asObservable().pipe(
+      take(1),
+      switchMap(res => {
+        // currUser = res;
+        return this.http.get<number[]>(`https://study-planner-w-authentication.firebaseio.com/users/${res.id}/settings/deadlines.json?auth=${res.token}`)
+      })
+    )
+
+    // let id;
+    // let token;
+    // return this.userId.pipe(
+    //   switchMap(res => {
+    //     id = res;
+    //     return this.userIdToken
+    //   }),
+    //   switchMap(res => {
+    //     token = res;
+    //     return this.http.get<number[]>(`https://study-planner-w-authentication.firebaseio.com/users/${id}/settings/deadlines.json?auth=${token}`)
+    //   })
+    // )
   }
 
 }

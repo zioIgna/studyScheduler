@@ -1,4 +1,8 @@
 export class User {
+
+    private deadLines: number[];
+    private subscriptionExpirationDate: Date;
+
     constructor(
         public id: string,
         public email: string,

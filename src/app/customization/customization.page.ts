@@ -1,19 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AuthenticationService } from '../auth/authentication.service';
 
 @Component({
   selector: 'app-customization',
   templateUrl: './customization.page.html',
   styleUrls: ['./customization.page.scss'],
 })
-export class CustomizationPage implements OnInit {
+export class CustomizationPage implements OnInit, OnDestroy {
 
-  private actualDeadlines: number[] = [2, 5, 7];
+  // private actualDeadlines: number[] = [2, 5, 7];
+  private actualDeadlines: number[];
   private updDeadlines: number[];
   private deadlines: number[];
   private newDeadline: number;
+  private deadlineSub: Subscription;
   private editMode = false;
 
-  constructor() { }
+  constructor(private authSrv: AuthenticationService) { }
 
   onSwitchEdit() {
     this.editMode = !this.editMode;
@@ -53,6 +57,9 @@ export class CustomizationPage implements OnInit {
     this.actualDeadlines = [...this.updDeadlines];
     this.editMode = false;
     this.newDeadline = null;
+    this.authSrv.setCustomSettings(this.actualDeadlines).subscribe(res => {
+      console.log('Salvati i nuovi settings');
+    })
   }
 
   getVal(index: number) {
@@ -65,8 +72,19 @@ export class CustomizationPage implements OnInit {
   }
 
   ngOnInit() {
-    this.updDeadlines = [...this.actualDeadlines];
-    this.deadlines = this.actualDeadlines;
+    this.deadlineSub = this.authSrv.fetchUserDeadlines().subscribe(
+      res => {
+        this.actualDeadlines = res;
+        this.updDeadlines = [...this.actualDeadlines];
+        this.deadlines = this.actualDeadlines;
+      }
+    )
+  }
+
+  ngOnDestroy(): void {
+    if (this.deadlineSub) {
+      this.deadlineSub.remove;
+    }
   }
 
 }

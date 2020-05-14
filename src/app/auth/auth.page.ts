@@ -54,7 +54,7 @@ export class AuthPage implements OnInit {
         if (this.isLogin) {
           authObs = this.authService.login(email, password);
         } else {
-          authObs = this.authService.signUp(email, password);
+          authObs = this.authService.signUp2(email, password);
         }
         authObs.subscribe(
           resData => {
