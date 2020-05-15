@@ -74,7 +74,7 @@ export class AuthenticationService {
       tap(this.setUserData.bind(this)),
       tap(res => respData = res),
       switchMap((res) => {
-        return this.setStandardSettings(res);
+        return this.setStandardSettings(res.localId, res.idToken);
         // const deadlines = [2, 5, 7, 13, 20];
         // return this.http.put<number[]>(
         //   `https://study-planner-w-authentication.firebaseio.com/users/${res.localId}/settings/deadlines.json?auth=${res.idToken}`,
@@ -106,10 +106,10 @@ export class AuthenticationService {
     this._user.next(new User(userData.localId, userData.email, userData.idToken, expirationTime));
   }
 
-  setStandardSettings(userData: AuthResponseData) {
+  setStandardSettings(localId: string, idToken: string) {
     const deadlines = [2, 5, 7, 13, 20];
     return this.http.put<number[]>(
-      `https://study-planner-w-authentication.firebaseio.com/users/${userData.localId}/settings/deadlines.json?auth=${userData.idToken}`,
+      `https://study-planner-w-authentication.firebaseio.com/users/${localId}/settings/deadlines.json?auth=${idToken}`,
       deadlines
     );
   }
@@ -121,6 +121,7 @@ export class AuthenticationService {
       take(1),
       tap(res => fetchedUserId = res),
       switchMap(res => { return this.userIdToken; }),
+      take(1),
       tap(res => fetchedUserToken = res),
       switchMap(res => {
         return this.http.put<number[]>(

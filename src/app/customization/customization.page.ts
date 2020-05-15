@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthenticationService } from '../auth/authentication.service';
+import { AlertController } from '@ionic/angular';
+import { tap, switchMap, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-customization',
@@ -16,8 +18,10 @@ export class CustomizationPage implements OnInit, OnDestroy {
   private newDeadline: number;
   private deadlineSub: Subscription;
   private editMode = false;
+  private isLoading = true;
 
-  constructor(private authSrv: AuthenticationService) { }
+
+  constructor(private authSrv: AuthenticationService, private alertCtrl: AlertController) { }
 
   onSwitchEdit() {
     this.editMode = !this.editMode;
@@ -28,6 +32,42 @@ export class CustomizationPage implements OnInit, OnDestroy {
       this.updDeadlines = [...this.actualDeadlines];
       this.newDeadline = null;
     }
+  }
+
+  onResetDeadlines() {
+    console.log('Resetting deadlines...');
+    this.alertCtrl.create({
+      header: 'Confirm reset?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Reset',
+          handler: () => {
+            let userId;
+            let userToken;
+            console.log('Reset!');
+            this.authSrv.userId.pipe(
+              take(1),
+              tap(res => userId = res),
+              switchMap(() => { return this.authSrv.userIdToken }),
+              take(1),
+              tap(res => userToken = res),
+              switchMap(() => { return this.authSrv.setStandardSettings(userId, userToken) }),
+              take(1)
+            ).subscribe(res => {
+              console.log('Reset completed! ', res);
+              this.updateDeadlines(res);
+              //TODO: aggiungere il caso di errore nella risposta
+            });
+          }
+        }
+      ]
+    }).then(el => {
+      el.present();
+    });
   }
 
   onAddDeadline() {
@@ -74,16 +114,29 @@ export class CustomizationPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.deadlineSub = this.authSrv.fetchUserDeadlines().subscribe(
       res => {
-        this.actualDeadlines = res;
-        this.updDeadlines = [...this.actualDeadlines];
-        this.deadlines = this.actualDeadlines;
+        this.isLoading = false;
+        this.updateDeadlines(res);
+      },
+      err => {
+        this.isLoading = false;
+        console.log('Data could not be fetched!');
       }
     )
   }
 
+  updateDeadlines(deadlines: number[]) {
+    if (deadlines) {
+      this.actualDeadlines = deadlines;
+    } else {
+      this.actualDeadlines = [];
+    }
+    this.updDeadlines = [...this.actualDeadlines];
+    this.deadlines = this.actualDeadlines;
+  }
+
   ngOnDestroy(): void {
     if (this.deadlineSub) {
-      this.deadlineSub.remove;
+      this.deadlineSub.unsubscribe();
     }
   }
 
