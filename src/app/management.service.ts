@@ -15,18 +15,6 @@ import { IBookData } from './ibook-data';
 import { AuthenticationService } from './auth/authentication.service';
 import { Question } from './question.model';
 
-// interface unitsData {
-//   appuntamenti: Scadenza[];
-//   chapterFrom: string;
-//   chapterTo: string;
-//   createdOn: string;
-//   libro: string;
-//   nextDate: Scadenza;
-//   overdueDates: boolean;
-//   title: string;
-//   today: string;
-// };
-
 @Injectable({
   providedIn: 'root'
 })
@@ -60,30 +48,6 @@ export class ManagementService implements OnInit {
       ))
     });
   }
-
-  // private _books: Book[] = [
-  //   {
-  //     titolo: 'libro di matematica',
-  //     autore: 'un pazzo',
-  //     pagine: 210
-  //   },
-  //   {
-  //     titolo: 'libro di storia',
-  //     autore: 'lucio',
-  //     pagine: 144
-  //   },
-  //   {
-  //     titolo: 'libro di geografia',
-  //     autore: 'marco',
-  //     pagine: 320
-  //   },
-  // ]
-
-
-
-  // public get books(): Book[] {
-  //   return this._books;
-  // }
 
   addBook(form: NgForm) {
     let generatedBookId: string;
@@ -120,20 +84,6 @@ export class ManagementService implements OnInit {
         this._books.next(res.concat(myBook));
       })
     );
-    // return this.http.post<{ name: string }>('https://study-planner-e6035.firebaseio.com/books.json', myBook)
-    //   .pipe(
-    //     switchMap(res => {
-    //       console.log('alla aggiunta del libro ho ottenuto: ', res);
-    //       generatedBookId = res.name;
-    //       return this.books
-    //     }),
-    //     take(1)
-    //   )
-    //   .subscribe(res => {
-    //     console.log('nella seconda parte di aggiunta di un libro ho ottenuto: ', res);
-    //     myBook.id = generatedBookId;
-    //     this._books.next(res.concat(myBook));
-    //   });
   }
 
   fetchBooks() {
@@ -171,60 +121,44 @@ export class ManagementService implements OnInit {
         this._books.next(books);
       })
     )
-    // return this.http.get<{ [key: string]: IBookData }>('https://study-planner-e6035.firebaseio.com/books.json')
-    // .pipe(
-    //   take(1),
-    //   map(resData => {
-    //     let books: Book[] = [];
-    //     for (const key in resData) {
-    //       if (resData.hasOwnProperty(key)) {
-    //         books.push({
-    //           id: key,
-    //           titolo: resData[key].titolo,
-    //           autore: resData[key].autore,
-    //           pagine: resData[key].pagine
-    //         })
-    //       }
-    //     }
-    //     return books;
-    //   }),
-    //   tap(books => {
-    //     console.log('sto inviando i books dopo il fetch: ', books);
-    //     this._books.next(books);
-    //   })
-    // )
+  }
+
+  createDeadlinesArray(values: number[]) {
+    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12);
+    let appuntamenti: Scadenza[] = [];
+    values.forEach(value => {
+      const newDeadline = new Date(today.getTime() + 1000 * 60 * 60 * 24 * value);
+      const newScadenza = new Scadenza(newDeadline, DeadlineStatus.Due);
+      appuntamenti.push(newScadenza);
+    });
+    return appuntamenti;
   }
 
   addUnit(form: NgForm, questions: Question[]) {
     let generatedId: string;
-    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12);
-    console.log('today is: ', today);
-    const in2days = new Date(today.getTime() + 1000 * 60 * 60 * 24 * 2);
-    const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
-    const add7days = new Date(add5days.getTime() + 1000 * 60 * 60 * 24 * 7);
-    const add13days = new Date(add7days.getTime() + 1000 * 60 * 60 * 24 * 13);
-    const add20days = new Date(add13days.getTime() + 1000 * 60 * 60 * 24 * 20);
-    // const appuntamenti: Date[] = [in2days, add5days, add7days, add13days, add20days];
-    let myUnit = new UnitComponent(
-      null,
-      form.value.riferimenti,
-      form.value.libro,
-      form.value.chapterFrom,
-      form.value.chapterTo,
-      today,
-      [
-        new Scadenza(in2days, DeadlineStatus.Due),
-        new Scadenza(add5days, DeadlineStatus.Due),
-        new Scadenza(add7days, DeadlineStatus.Due),
-        new Scadenza(add13days, DeadlineStatus.Due),
-        new Scadenza(add20days, DeadlineStatus.Due)
-      ],
-      form.value.notes,
-      questions,
-      false
-    );
+    let myUnit: UnitComponent;
+    let fetchedDeadlines: number[];
     let fetchedUserId: string;
-    return this.authService.userId.pipe(
+
+    return this.authService.fetchUserDeadlines().pipe(
+      take(1),
+      tap(res => fetchedDeadlines = res),
+      tap(res => {
+        let appuntamenti = this.createDeadlinesArray(fetchedDeadlines);
+        myUnit = new UnitComponent(
+          null,
+          form.value.riferimenti,
+          form.value.libro,
+          form.value.chapterFrom,
+          form.value.chapterTo,
+          today,
+          appuntamenti,
+          form.value.notes,
+          questions,
+          false
+        )
+      }),
+      switchMap(res => { return this.authService.userId }),
       take(1),
       switchMap(userIdRes => {
         if (!userIdRes) {
@@ -318,6 +252,8 @@ export class ManagementService implements OnInit {
   resetDates(unit: UnitComponent) {
     let fetchedUserId: string;
     let appuntamenti: Scadenza[] = [];
+    let fetchedDeadlines: number[];
+
     const newDate = new Date(unit.createdOn.getFullYear(), unit.createdOn.getMonth(), unit.createdOn.getDate(), 12, 0, 0, 0);
     console.log('new date is: ', newDate);
     const in2days = new Date(newDate.getTime() + 1000 * 60 * 60 * 24 * 2);
@@ -333,7 +269,36 @@ export class ManagementService implements OnInit {
         new Scadenza(add13days, DeadlineStatus.Due),
         new Scadenza(add20days, DeadlineStatus.Due)
       ]);
-    return this.authService.userId.pipe(
+
+    // return this.authService.fetchUserDeadlines().pipe(
+    //   take(1),
+    //   tap(res => fetchedDeadlines = res),
+    //   tap(res => {
+    //     let appuntamenti = this.createDeadlinesArray(fetchedDeadlines);
+    //   myUnit = new UnitComponent(
+    //     null,
+    //     form.value.riferimenti,
+    //     form.value.libro,
+    //     form.value.chapterFrom,
+    //     form.value.chapterTo,
+    //     today,
+    //     appuntamenti,
+    //     form.value.notes,
+    //     questions,
+    //     false
+    //   )
+    // }),
+    // switchMap(res => { return this.authService.userId }),
+
+    return this.authService.fetchUserDeadlines().pipe(
+      take(1),
+      tap(res => fetchedDeadlines = res),
+      tap(res => {
+        appuntamenti = this.createDeadlinesArray(fetchedDeadlines);
+      }),
+      switchMap(res => {
+        return this.authService.userId
+      }),
       take(1),
       switchMap(userIdRes => {
         if (!userIdRes) {

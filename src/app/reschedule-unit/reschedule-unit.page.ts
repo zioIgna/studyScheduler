@@ -105,7 +105,7 @@ export class RescheduleUnitPage implements OnInit {
           role: 'cancel'
         },
         {
-          text: 'Delete',
+          text: 'Confirm',
           handler: () => {
             console.log('Valori resettati!');
             this.managementSrv.resetDates(this.unit).subscribe(res => {
