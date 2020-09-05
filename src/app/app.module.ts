@@ -10,11 +10,11 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NavigationRoutingModule } from './navigation/navigation-routing.module';
+import { EditBookComponent } from './argomenti/edit-book/edit-book.component';
 
 
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [],
   imports: [BrowserModule, HttpClientModule, IonicModule.forRoot(), AppRoutingModule],
   // imports: [BrowserModule, HttpClientModule, IonicModule.forRoot(), NavigationRoutingModule],
   providers: [
@@ -22,6 +22,7 @@ import { NavigationRoutingModule } from './navigation/navigation-routing.module'
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
+  entryComponents: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

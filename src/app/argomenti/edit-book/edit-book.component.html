@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-button (click)="onDismiss()">
+        <ion-icon slot="start" name="arrow-round-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Modifica i valori del libro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="onCreateBook(f)" #f="ngForm">
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+          <ion-item>
+            <ion-label position='floating'>Titolo del libro</ion-label>
+            <ion-input type='text' ngModel name='title' required></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm='3'>
+          <ion-item>
+            <ion-label position='floating'>Autore</ion-label>
+            <ion-input type='text' ngModel name='autore' required></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm='3'>
+          <ion-item>
+            <ion-label position='floating'>Numero pagine</ion-label>
+            <ion-input type='number' ngModel name='pagine' required></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size-sm="6" offset-sm='3'>
+          <ion-button color="secondary" type="submit" expand='block' [disabled]="!f.valid">
+            Save!
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

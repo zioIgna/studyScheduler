@@ -62,6 +62,16 @@ const routes: Routes = [
                     ]
                 },
                 {
+                    path: 'sources',
+                    children:
+                    [
+                        {
+                            path: '',
+                            loadChildren: '../sources/sources.module#SourcesPageModule'
+                        }
+                    ]
+                },
+                {
                     path: '',
                     redirectTo: '/navigation/tabs/args',
                     pathMatch: 'full'

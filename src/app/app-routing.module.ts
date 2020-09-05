@@ -10,6 +10,8 @@ const routes: Routes = [
   { path: 'navigation', loadChildren: './navigation/navigation.module#NavigationPageModule' },
   // { path: 'unit-detail', loadChildren: './unit-detail/unit-detail.module#UnitDetailPageModule' },
   { path: 'auth', loadChildren: './auth/auth.module#AuthPageModule' },
+  // { path: 'sources', loadChildren: './sources/sources.module#SourcesPageModule' },
+
   // { path: 'customization', loadChildren: './customization/customization.module#CustomizationPageModule' },
 
   // { path: 'reschedule-unit', loadChildren: './reschedule-unit/reschedule-unit.module#RescheduleUnitPageModule' },
