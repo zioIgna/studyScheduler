@@ -4,6 +4,7 @@ import { ManagementService } from '../management.service';
 import { Subscription } from 'rxjs';
 import { ModalController, LoadingController } from '@ionic/angular';
 import { EditBookComponent } from '../argomenti/edit-book/edit-book.component';
+import { IBookData } from '../ibook-data';
 
 @Component({
   selector: 'app-sources',
@@ -37,11 +38,26 @@ export class SourcesPage implements OnInit {
       modalEl.present();
       return modalEl.onDidDismiss();
     }).then(resultData => {
-      this.loadingCtrl.create({ message: 'Editing book...' }).then(loadingEl => {
-        loadingEl.present();
-        const data = resultData.data.bookData;
-        
-      })
+      this.loadingCtrl
+        .create({ message: 'Editing book...' })
+        .then(loadingEl => {
+          loadingEl.present();
+          if (resultData && resultData.data && resultData.data.bookData) {
+            const data: IBookData = resultData.data.bookData;
+            console.log("Ricevuti i dati: ", data);
+            this.managementSrv.editSource(currBook.id, data).subscribe(
+              res => {
+                console.log('Aggiornata la source: ', res);
+                loadingEl.dismiss();
+              },
+              err => {
+                loadingEl.dismiss();
+              });
+          }
+          else {
+            loadingEl.dismiss();
+          }
+        })
     })
   }
 

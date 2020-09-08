@@ -31,12 +31,9 @@ export class EditBookComponent implements OnInit {
   suggestFormValues() {
     this.form.setValue(
       {
-        // title: this.book.titolo,
-        title: 'test title',
-        // autore: this.book.autore,
-        autore: 'test autore',
-        // pagine: this.book.pagine
-        pagine: 10
+        title: this.book.titolo,
+        autore: this.book.autore,
+        pagine: this.book.pagine
       }
     );
   }
