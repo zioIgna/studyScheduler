@@ -123,11 +123,13 @@ export class ManagementService implements OnInit {
     )
   }
 
-  createDeadlinesArray(values: number[]) {
+  createDeadlinesArray(values: number[], creationDate?: Date) {
+    let refDate: Date;
     const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12);
+    refDate = creationDate ? creationDate : today;
     let appuntamenti: Scadenza[] = [];
     values.forEach(value => {
-      const newDeadline = new Date(today.getTime() + 1000 * 60 * 60 * 24 * value);
+      const newDeadline = new Date(refDate.getTime() + 1000 * 60 * 60 * 24 * value);
       const newScadenza = new Scadenza(newDeadline, DeadlineStatus.Due);
       appuntamenti.push(newScadenza);
     });
@@ -285,21 +287,21 @@ export class ManagementService implements OnInit {
     let appuntamenti: Scadenza[] = [];
     let fetchedDeadlines: number[];
 
-    const newDate = new Date(unit.createdOn.getFullYear(), unit.createdOn.getMonth(), unit.createdOn.getDate(), 12, 0, 0, 0);
-    console.log('new date is: ', newDate);
-    const in2days = new Date(newDate.getTime() + 1000 * 60 * 60 * 24 * 2);
-    const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
-    const add7days = new Date(add5days.getTime() + 1000 * 60 * 60 * 24 * 7);
-    const add13days = new Date(add7days.getTime() + 1000 * 60 * 60 * 24 * 13);
-    const add20days = new Date(add13days.getTime() + 1000 * 60 * 60 * 24 * 20);
-    appuntamenti = appuntamenti.concat(
-      [
-        new Scadenza(in2days, DeadlineStatus.Due),
-        new Scadenza(add5days, DeadlineStatus.Due),
-        new Scadenza(add7days, DeadlineStatus.Due),
-        new Scadenza(add13days, DeadlineStatus.Due),
-        new Scadenza(add20days, DeadlineStatus.Due)
-      ]);
+    // const newDate = new Date(unit.createdOn.getFullYear(), unit.createdOn.getMonth(), unit.createdOn.getDate(), 12, 0, 0, 0);
+    // console.log('new date is: ', newDate);
+    // const in2days = new Date(newDate.getTime() + 1000 * 60 * 60 * 24 * 2);
+    // const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
+    // const add7days = new Date(add5days.getTime() + 1000 * 60 * 60 * 24 * 7);
+    // const add13days = new Date(add7days.getTime() + 1000 * 60 * 60 * 24 * 13);
+    // const add20days = new Date(add13days.getTime() + 1000 * 60 * 60 * 24 * 20);
+    // appuntamenti = appuntamenti.concat(
+    //   [
+    //     new Scadenza(in2days, DeadlineStatus.Due),
+    //     new Scadenza(add5days, DeadlineStatus.Due),
+    //     new Scadenza(add7days, DeadlineStatus.Due),
+    //     new Scadenza(add13days, DeadlineStatus.Due),
+    //     new Scadenza(add20days, DeadlineStatus.Due)
+    //   ]);
 
     // return this.authService.fetchUserDeadlines().pipe(
     //   take(1),
@@ -325,7 +327,7 @@ export class ManagementService implements OnInit {
       take(1),
       tap(res => fetchedDeadlines = res),
       tap(res => {
-        appuntamenti = this.createDeadlinesArray(fetchedDeadlines);
+        appuntamenti = this.createDeadlinesArray(fetchedDeadlines, unit.createdOn);
       }),
       switchMap(res => {
         return this.authService.userId
