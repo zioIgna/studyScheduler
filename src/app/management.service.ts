@@ -286,43 +286,6 @@ export class ManagementService implements OnInit {
     let fetchedUserId: string;
     let appuntamenti: Scadenza[] = [];
     let fetchedDeadlines: number[];
-
-    // const newDate = new Date(unit.createdOn.getFullYear(), unit.createdOn.getMonth(), unit.createdOn.getDate(), 12, 0, 0, 0);
-    // console.log('new date is: ', newDate);
-    // const in2days = new Date(newDate.getTime() + 1000 * 60 * 60 * 24 * 2);
-    // const add5days = new Date(in2days.getTime() + 1000 * 60 * 60 * 24 * 5);
-    // const add7days = new Date(add5days.getTime() + 1000 * 60 * 60 * 24 * 7);
-    // const add13days = new Date(add7days.getTime() + 1000 * 60 * 60 * 24 * 13);
-    // const add20days = new Date(add13days.getTime() + 1000 * 60 * 60 * 24 * 20);
-    // appuntamenti = appuntamenti.concat(
-    //   [
-    //     new Scadenza(in2days, DeadlineStatus.Due),
-    //     new Scadenza(add5days, DeadlineStatus.Due),
-    //     new Scadenza(add7days, DeadlineStatus.Due),
-    //     new Scadenza(add13days, DeadlineStatus.Due),
-    //     new Scadenza(add20days, DeadlineStatus.Due)
-    //   ]);
-
-    // return this.authService.fetchUserDeadlines().pipe(
-    //   take(1),
-    //   tap(res => fetchedDeadlines = res),
-    //   tap(res => {
-    //     let appuntamenti = this.createDeadlinesArray(fetchedDeadlines);
-    //   myUnit = new UnitComponent(
-    //     null,
-    //     form.value.riferimenti,
-    //     form.value.libro,
-    //     form.value.chapterFrom,
-    //     form.value.chapterTo,
-    //     today,
-    //     appuntamenti,
-    //     form.value.notes,
-    //     questions,
-    //     false
-    //   )
-    // }),
-    // switchMap(res => { return this.authService.userId }),
-
     return this.authService.fetchUserDeadlines().pipe(
       take(1),
       tap(res => fetchedDeadlines = res),
