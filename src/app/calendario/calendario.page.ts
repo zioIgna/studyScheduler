@@ -9,6 +9,14 @@ export class CalendarioPage implements OnInit {
 
   constructor() { }
 
+  eventSource = [];
+  viewTitle: string;
+
+  calendar = {
+    mode: 'month',
+    currentDate: new Date()
+  };
+
   ngOnInit() {
   }
 
