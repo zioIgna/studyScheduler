@@ -11,12 +11,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { NavigationRoutingModule } from './navigation/navigation-routing.module';
 import { EditBookComponent } from './argomenti/edit-book/edit-book.component';
-import { NgCalendarModule } from 'ionic2-calendar';
 
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, HttpClientModule, IonicModule.forRoot(), AppRoutingModule, NgCalendarModule],
+  imports: [BrowserModule, HttpClientModule, IonicModule.forRoot(), AppRoutingModule],
   // imports: [BrowserModule, HttpClientModule, IonicModule.forRoot(), NavigationRoutingModule],
   providers: [
     StatusBar,
