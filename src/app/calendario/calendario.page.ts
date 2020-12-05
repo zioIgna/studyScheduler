@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CalendarComponent } from 'ionic2-calendar';
+import { IEvent } from 'ionic2-calendar/calendar';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { ManagementService } from '../management.service';
+import { UnitComponent } from '../unit/unit.component';
 
 @Component({
   selector: 'app-calendario',
