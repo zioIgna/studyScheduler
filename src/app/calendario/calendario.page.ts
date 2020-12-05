@@ -15,18 +15,19 @@ export class CalendarioPage implements OnInit {
 
   constructor(private managementSrv: ManagementService) { }
 
-  eventSource: IEvent[] = [
-    {
-      allDay: true,
-      endTime: new Date(Date.UTC(2020, 11, 23)),
-      startTime: new Date(Date.UTC(2020, 11, 24)),
-      title: "Test event"
-    }
-  ];
+  eventSource: IEvent[] = [];
+  // eventSource: IEvent[] = [
+  //   {
+  //     allDay: true,
+  //     endTime: new Date(Date.UTC(2020, 11, 4)),
+  //     startTime: new Date(Date.UTC(2020, 11, 3)),
+  //     title: "Test event"
+  //   }
+  // ];
   overallUnits: UnitComponent[];
   private unitsSub: Subscription;
   viewTitle: string;
-  @ViewChild(CalendarComponent) myCalendar:CalendarComponent;
+  @ViewChild(CalendarComponent) myCalendar: CalendarComponent;
 
   calendar = {
     mode: 'month',
@@ -35,22 +36,22 @@ export class CalendarioPage implements OnInit {
 
   ngOnInit() {
     console.log('EventSource: ', this.eventSource);
-    // let event: IEvent = {
-    //   allDay: true,
-    //   endTime: new Date(Date.UTC(2020, 11, 23)),
-    //   startTime: new Date(Date.UTC(2020, 11, 23)),
-    //   title: "Test event"
-    // }
-    // this.eventSource.push(event);
-    // this.unitsSub = this.managementSrv.fetchUnits().pipe(take(1)).subscribe(units => {
-    //   this.overallUnits = units;
-    //   this.mapToEvents(units);
-    //   console.log("Questi sono gli eventi: ", this.eventSource);
-    // })
+    this.managementSrv.fetchUnits().pipe(take(1)).subscribe(units => {
+      this.updateEvents(units);
+    });
+    this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
+      this.updateEvents(units);
+    });
   }
 
+  private updateEvents(units: UnitComponent[]) {
+    this.overallUnits = units;
+    this.mapToEvents(units);
+    console.log("Questi sono gli eventi: ", this.eventSource);
+  }
 
   private mapToEvents(units: UnitComponent[]) {
+    this.eventSource = [];
     units.forEach(unit => {
       unit.appuntamenti.forEach(deadline => {
         let year = deadline.giorno.getFullYear();
@@ -58,13 +59,27 @@ export class CalendarioPage implements OnInit {
         let day = deadline.giorno.getDate();
         let event: IEvent = {
           allDay: true,
-          startTime: new Date(Date.UTC(year, month, day, 0)),
-          endTime: new Date(Date.UTC(year, month, day, 0)),
+          startTime: new Date(Date.UTC(year, month, day)),
+          endTime: new Date(Date.UTC(year, month, day + 1)),
           title: unit.title
         }
         this.eventSource.push(event);
       });
     });
+  }
+
+  // Change current month/week/day
+  next() {
+    this.myCalendar.slideNext();
+  }
+
+  back() {
+    this.myCalendar.slidePrev();
+  }
+
+  // Selected date reange and hence title changed
+  onViewTitleChanged(title) {
+    this.viewTitle = title;
   }
 
 }
