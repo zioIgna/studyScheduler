@@ -54,22 +54,22 @@ const routes: Routes = [
                 {
                     path: 'settings',
                     children:
-                    [
-                        {
-                            path: '',
-                            loadChildren: '../customization/customization.module#CustomizationPageModule'
-                        }
-                    ]
+                        [
+                            {
+                                path: '',
+                                loadChildren: '../customization/customization.module#CustomizationPageModule'
+                            }
+                        ]
                 },
                 {
                     path: 'sources',
                     children:
-                    [
-                        {
-                            path: '',
-                            loadChildren: '../sources/sources.module#SourcesPageModule'
-                        }
-                    ]
+                        [
+                            {
+                                path: '',
+                                loadChildren: '../sources/sources.module#SourcesPageModule'
+                            }
+                        ]
                 },
                 {
                     path: '',
