@@ -29,6 +29,7 @@
   [currentDate]="calendar.currentDate"
   (onTitleChanged)="onViewTitleChanged($event)"
   [monthviewDisplayEventTemplate]="template"
+  [monthviewEventDetailTemplate]="detTemp"
   [autoSelect]="false"
   >    
   </calendar>
@@ -38,6 +39,18 @@
     <div class="indicator-container">
       <div class="event-indicator" *ngFor="let e of view.dates[row*7+col].events"></div>
     </div>
+  </ng-template>
+  
+  <ng-template #detailTemplate let-showEventDetail="showEventDetail" let-selectedDate="selectedDate" let-noEventsLabel="noEventsLabel">
+    {{showEventDetail}} - selDate: {{selectedDate | json}} - noEvLab: {{noEventsLabel}}
+  </ng-template>
+
+  <ng-template #detTemp let-selectedDate="selectedDate">
+    <ion-list>
+      <ion-item *ngFor="let event of selectedDate.events">
+        {{event | json}}
+      </ion-item>
+    </ion-list>
   </ng-template>
 
 </ion-content>

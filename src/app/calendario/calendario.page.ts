@@ -57,11 +57,12 @@ export class CalendarioPage implements OnInit {
         let year = deadline.giorno.getFullYear();
         let month = deadline.giorno.getMonth();
         let day = deadline.giorno.getDate();
-        let event: IEvent = {
+        let event: IExtendedEvent = {
           allDay: true,
           startTime: new Date(Date.UTC(year, month, day)),
           endTime: new Date(Date.UTC(year, month, day + 1)),
-          title: unit.title
+          title: unit.title,
+          unitId: unit.id
         }
         this.eventSource.push(event);
       });
@@ -82,4 +83,8 @@ export class CalendarioPage implements OnInit {
     this.viewTitle = title;
   }
 
+}
+
+interface IExtendedEvent extends IEvent {
+  unitId?: string;
 }
