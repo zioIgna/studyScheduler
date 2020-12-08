@@ -28,7 +28,16 @@
   [calendarMode]="calendar.mode"
   [currentDate]="calendar.currentDate"
   (onTitleChanged)="onViewTitleChanged($event)"
+  [monthviewDisplayEventTemplate]="template"
+  [autoSelect]="false"
   >    
   </calendar>
+  
+  <ng-template #template let-view="view" let-row="row" let-col="col">
+    {{view.dates[row*7+col].label}}
+    <div class="indicator-container">
+      <div class="event-indicator" *ngFor="let e of view.dates[row*7+col].events"></div>
+    </div>
+  </ng-template>
 
 </ion-content>
