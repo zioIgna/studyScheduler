@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CalendarComponent } from 'ionic2-calendar';
 import { IEvent } from 'ionic2-calendar/calendar';
 import { Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ManagementService } from '../management.service';
 import { UnitComponent } from '../unit/unit.component';
 
@@ -36,12 +36,21 @@ export class CalendarioPage implements OnInit {
 
   ngOnInit() {
     console.log('EventSource: ', this.eventSource);
-    this.managementSrv.fetchUnits().pipe(take(1)).subscribe(units => {
-      this.updateEvents(units);
-    });
-    this.unitsSub = this.managementSrv.unitlist.subscribe(units => {
-      this.updateEvents(units);
-    });
+    this.managementSrv.fetchUnits()
+      .pipe(
+        map(arr => arr.filter(el => el.isArchived === false)),
+        take(1)
+      )
+      .subscribe(units => {
+        this.updateEvents(units);
+      });
+    this.unitsSub = this.managementSrv.unitlist
+      .pipe(
+        map(arr => arr.filter(el => el.isArchived === false))
+      )
+      .subscribe(units => {
+        this.updateEvents(units);
+      });
   }
 
   private updateEvents(units: UnitComponent[]) {
