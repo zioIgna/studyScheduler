@@ -63,7 +63,7 @@ export class CalendarioPage implements OnInit {
     this.eventSource = [];
     units.forEach(unit => {
       unit.appuntamenti.forEach(deadline => {
-        let year = deadline.giorno.getFullYear();
+        let year = deadline.giorno.getUTCFullYear();
         let month = deadline.giorno.getMonth();
         let day = deadline.giorno.getDate();
         let event: IExtendedEvent = {
