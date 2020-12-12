@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NavigationRoutingModule } from './navigation/navigation-routing.module';
 import { EditBookComponent } from './argomenti/edit-book/edit-book.component';
 import { NgCalendarModule } from 'ionic2-calendar';
-
+import { ErrorService } from './error.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,7 +21,8 @@ import { NgCalendarModule } from 'ionic2-calendar';
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: ErrorHandler, useClass: ErrorService }
   ],
   entryComponents: [],
   bootstrap: [AppComponent]
