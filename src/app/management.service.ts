@@ -147,6 +147,7 @@ export class ManagementService implements OnInit {
       tap(res => fetchedDeadlines = res),
       tap(res => {
         let appuntamenti = this.createDeadlinesArray(fetchedDeadlines);
+        console.log('Today: ', today);
         myUnit = new UnitComponent(
           null,
           form.value.riferimenti,
