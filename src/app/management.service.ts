@@ -255,7 +255,33 @@ export class ManagementService implements OnInit {
       })
     )
   }
-
+  
+  deleteSource(sourceId: string) {
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap(userIdRes => {
+        if (!userIdRes) {
+          throw new Error('User not found!');
+        }
+        fetchedUserId = userIdRes;
+        return this.authService.userIdToken;
+      }),
+      take(1),
+      switchMap(token => {
+        return this.http.delete(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/books/${sourceId}.json?auth=${token}`)
+      }),
+      take(1),
+      switchMap(res => {
+        console.log('ho ottenuto: ', res);
+        return this.fetchBooks();
+      }),
+      tap(updatedBooks => {
+        this._books.next(updatedBooks);
+      })
+    )
+  }
+  
   rescheduleDates(unitId: string, appuntamenti: Scadenza[]) {
     let fetchedUserId: string;
     let payload = JSON.stringify(appuntamenti);

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Book } from '../Book';
 import { ManagementService } from '../management.service';
 import { Subscription } from 'rxjs';
-import { ModalController, LoadingController } from '@ionic/angular';
+import { ModalController, LoadingController, IonItemSliding, AlertController } from '@ionic/angular';
 import { EditBookComponent } from '../argomenti/edit-book/edit-book.component';
 import { IBookData } from '../ibook-data';
 
@@ -16,7 +16,7 @@ export class SourcesPage implements OnInit {
   private _books: Book[];
   private booksSub: Subscription;
 
-  constructor(private managementSrv: ManagementService, private modalCtrl: ModalController, private loadingCtrl: LoadingController,) { }
+  constructor(private managementSrv: ManagementService, private modalCtrl: ModalController, private loadingCtrl: LoadingController, private alertCtrl: AlertController) { }
 
   ngOnInit() {
     this.managementSrv.fetchBooks().subscribe(res => {
@@ -59,6 +59,33 @@ export class SourcesPage implements OnInit {
           }
         })
     })
+  }
+
+  onDelete(slidingItem: IonItemSliding, book: Book) {
+    console.log("Deleting unit ", book.titolo);
+    this.alertCtrl.create({
+      header: 'Confirm delete?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            slidingItem.close();
+          }
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            console.log('Deleting book!');
+            this.managementSrv.deleteSource(book.id).subscribe(res => {
+              console.log('Deletion completed');
+            })
+          }
+        }
+      ]
+    }).then(el => {
+      el.present();
+    });
   }
 
   onCancel() {
