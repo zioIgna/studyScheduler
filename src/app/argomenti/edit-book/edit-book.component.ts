@@ -23,7 +23,8 @@ export class EditBookComponent implements OnInit {
       bookData: {
         titolo: this.form.value['title'],
         autore: this.form.value['autore'],
-        pagine: +this.form.value['pagine']
+        pagine: +this.form.value['pagine'],
+        isArchived: false
       }
     })
   }

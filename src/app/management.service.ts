@@ -110,7 +110,8 @@ export class ManagementService implements OnInit {
               id: key,
               titolo: resData[key].titolo,
               autore: resData[key].autore,
-              pagine: resData[key].pagine
+              pagine: resData[key].pagine,
+              isArchived: resData[key].isArchived !== undefined ? resData[key].isArchived : false
             })
           }
         }
@@ -230,7 +231,9 @@ export class ManagementService implements OnInit {
     let updFields: IBookData = {
       titolo: bookData.titolo,
       autore: bookData.autore,
-      pagine: bookData.pagine
+      pagine: bookData.pagine,
+      isArchived: bookData.isArchived != undefined ? bookData.isArchived : false
+      // isArchived: bookData.isArchived
     };
     return this.authService.userId.pipe(
       take(1),
@@ -281,7 +284,7 @@ export class ManagementService implements OnInit {
       })
     )
   }
-  
+
   rescheduleDates(unitId: string, appuntamenti: Scadenza[]) {
     let fetchedUserId: string;
     let payload = JSON.stringify(appuntamenti);

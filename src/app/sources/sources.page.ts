@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Book } from '../Book';
 import { ManagementService } from '../management.service';
 import { Subscription } from 'rxjs';
@@ -11,20 +11,31 @@ import { IBookData } from '../ibook-data';
   templateUrl: './sources.page.html',
   styleUrls: ['./sources.page.scss'],
 })
-export class SourcesPage implements OnInit {
+export class SourcesPage implements OnInit, OnDestroy {
 
   private _books: Book[];
   private booksSub: Subscription;
+  private archivedBooks: Book[];
+  private nonArchivedBooks: Book[];
+  private showArchived = false;
 
   constructor(private managementSrv: ManagementService, private modalCtrl: ModalController, private loadingCtrl: LoadingController, private alertCtrl: AlertController) { }
 
   ngOnInit() {
-    this.managementSrv.fetchBooks().subscribe(res => {
-      this._books = res;
+    this.managementSrv.fetchBooks().subscribe(books => {
+      this.getAndSortBooks(books);
     });
-    this.booksSub = this.managementSrv.books.subscribe(res => {
-      this._books = res;
+    this.booksSub = this.managementSrv.books.subscribe(books => {
+      this.getAndSortBooks(books);
     })
+  }
+
+  getAndSortBooks(books: Book[]) {
+    this._books = books;
+    this.archivedBooks = this._books.filter(book => book.isArchived == true);
+    this.nonArchivedBooks = this._books.filter(book => book.isArchived == undefined || book.isArchived == false);
+    this.archivedBooks.sort((a, b) => a.titolo > b.titolo ? 1 : -1);
+    this.nonArchivedBooks.sort((a, b) => a.titolo > b.titolo ? 1 : -1);
   }
 
   onEditBook(currBook: Book) {
@@ -88,9 +99,30 @@ export class SourcesPage implements OnInit {
     });
   }
 
+  onArchive(book: Book) {
+    console.log("Archiving book", book.titolo);
+    if (book.isArchived != undefined) {
+      book.isArchived = !book.isArchived;
+    } else {
+      book.isArchived = true;
+    }
+    this.managementSrv.editSource(book.id, book).subscribe((res) => {
+      console.log('Eseguito onArchive, il book ora è: ', book);
+    });
+  }
+
   onCancel() {
     this.modalCtrl.dismiss(null, 'cancel');
   }
 
+  onShowArchived() {
+    this.showArchived = !this.showArchived;
+  }
+
+  ngOnDestroy(): void {
+    if (this.booksSub) {
+      this.booksSub.unsubscribe();
+    };
+  }
 
 }

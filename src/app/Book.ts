@@ -4,4 +4,5 @@ export interface Book {
   autore: string;
   pagine: number;
   note?: string;
+  isArchived?: boolean
 }
