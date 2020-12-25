@@ -9,59 +9,11 @@
 
 <ion-content>
   <ion-list>
-    <ion-item-sliding *ngFor="let book of nonArchivedBooks" #slidingItem>
-      <ion-item>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="1">
-              <ion-icon name="book" color="primary"></ion-icon>
-            </ion-col>
-            <ion-col size="9">
-              <ion-label>{{book.titolo}}</ion-label>
-            </ion-col>
-            <ion-col text-center size="2">
-              <ion-button fill="outline" expand='block'(click)="onEditBook(book)">
-                <ion-icon name="construct"></ion-icon>
-              </ion-button>
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col size="1">
-              <ion-icon name="contact" color="primary"></ion-icon>
-            </ion-col>
-            <ion-col>
-              <ion-note>{{book.autore}}</ion-note>
-            </ion-col>
-            <ion-col size="2" text-right>
-              <ion-note>{{book.pagine}}</ion-note>
-            </ion-col>
-            <ion-col size="1">
-              <ion-icon name="document" color="primary"></ion-icon>
-            </ion-col>
-          </ion-row>
-          <ion-row *ngIf="book.note">
-            <ion-col size="1">
-              <ion-icon name="paper"></ion-icon>
-            </ion-col>
-            <ion-col>
-              <ion-note>{{book.note}}</ion-note>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-item>
-      <ion-item-options>
-        <ion-item-option color="warning" (click)="onArchive(book)">
-          <!-- Archive -->
-          <ion-icon [name]="book.isArchived ? 'open': 'archive'" slot="icon-only"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-      <ion-item-options side="start">
-        <ion-item-option color="danger" (click)="onDelete(slidingItem, book)">
-          <ion-icon name="trash" slot="icon-only"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
+    <ng-container *ngFor="let book of nonArchivedBooks">
+      <ng-container *ngTemplateOutlet="slidingComponent; context: {book: book}"></ng-container>
+    </ng-container>
   </ion-list>
+  
   <ion-list-header lines="inset" *ngIf="archivedBooks.length > 0">
     <ion-button fill="clear" (click)="onShowArchived()" no-margin no-padding>
       <ion-icon [name]="showArchived ? 'arrow-dropup' : 'arrow-dropdown'"></ion-icon>
@@ -69,9 +21,14 @@
     </ion-button>
   </ion-list-header>
 
-
   <ion-list *ngIf="showArchived == true">
-    <ion-item-sliding *ngFor="let book of archivedBooks" #slidingItem>
+    <ng-container *ngFor="let book of archivedBooks">
+      <ng-container *ngTemplateOutlet="slidingComponent; context: {book: book}"></ng-container>
+    </ng-container>
+  </ion-list>
+
+  <ng-template #slidingComponent let-book='book'>
+    <ion-item-sliding #slidingItem>
       <ion-item>
         <ion-grid>
           <ion-row>
@@ -123,8 +80,6 @@
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
-  </ion-list>
-    <!-- <app-unit-item *ngFor="let item of archivedBooks; trackBy: trackByFn" [unitItem]="item"></app-unit-item> -->
-
+  </ng-template>
 
 </ion-content>
