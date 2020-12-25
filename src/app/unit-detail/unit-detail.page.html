@@ -33,8 +33,8 @@
       </ion-item>
       <p *ngIf="unit?.nextDate"><ion-icon name="calendar" color="primary"></ion-icon><i> Next Date: </i>{{unit?.nextDate.giorno | date}}</p>
       <!-- <div *ngIf="unit.nextDate == undefined"> -->
-        <ion-grid class="ion-no-padding lat-border" *ngFor="let date of unit?.appuntamenti">
-          <ion-row (click)="onSwitchStatus(date.giorno)">
+        <ion-grid class="ion-no-padding lat-border">
+          <ion-row *ngFor="let date of unit?.appuntamenti" (click)="onSwitchStatus(date.giorno)">
             <ion-col size="6" class="ion-no-padding">
               <p class="left-margin">{{ date.giorno | date }}</p>
             </ion-col>
