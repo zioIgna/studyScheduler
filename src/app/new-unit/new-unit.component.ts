@@ -45,10 +45,10 @@ export class NewUnitComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // this._books = this.managementSrv.books;
     this.managementSrv.fetchBooks().subscribe(res => {
-      this._books = res;
+      this._books = res.filter(book => book.isArchived == undefined || book.isArchived == false);
     });
     this.booksSub = this.managementSrv.books.subscribe(res => {
-      this._books = res;
+      this._books = res.filter(book => book.isArchived == undefined || book.isArchived == false);
     })
     // console.log('i books nella new-unit component sono: ', this._books);
   }

@@ -69,10 +69,10 @@ export class UpdateUnitPage implements OnInit, OnDestroy {
       }
     });
     this.managementSrv.fetchBooks().subscribe(res => {
-      this._books = res;
+      this._books = res.filter(book => book.isArchived == undefined || book.isArchived == false);
     });
     this.booksSub = this.managementSrv.books.subscribe(res => {
-      this._books = res;
+      this._books = res.filter(book => book.isArchived == undefined || book.isArchived == false);
     })
   }
 

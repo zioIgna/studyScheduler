@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content>
-  <form #unitForm="ngForm" (ngSubmit)="onCreateUnit(unitForm)">
+  <form (ngSubmit)="onCreateUnit(unitForm)" #unitForm="ngForm">
     <ion-grid fixed>
       <ion-row>
         <ion-col size-sm="6" offset-sm="3">

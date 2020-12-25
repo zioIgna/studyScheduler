@@ -55,7 +55,8 @@ export class ManagementService implements OnInit {
       id: null,
       titolo: form.value.title,
       autore: form.value.autore,
-      pagine: form.value.pagine
+      pagine: form.value.pagine,
+      isArchived: false
     };
     let fetchedUserId: string;
     return this.authService.userId.pipe(
@@ -126,7 +127,7 @@ export class ManagementService implements OnInit {
 
   createDeadlinesArray(values: number[], creationDate?: Date) {
     let refDate: Date;
-    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12);
+    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12, 0, 0, 0);
     refDate = creationDate ? creationDate : today;
     let appuntamenti: Scadenza[] = [];
     values.forEach(value => {
@@ -142,25 +143,33 @@ export class ManagementService implements OnInit {
     let myUnit: UnitComponent;
     let fetchedDeadlines: number[];
     let fetchedUserId: string;
+    console.log('Alla creazine la form è: ', form.value);
+    let fRiferimenti = form.value.riferimenti;
+    let fLibro = form.value.libro;
+    let fChapterFrom = form.value.chapterFrom;
+    let fChapterTo = form.value.chapterTo;
+    let fNotes = form.value.notes;
 
     return this.authService.fetchUserDeadlines().pipe(
       take(1),
       tap(res => fetchedDeadlines = res),
       tap(res => {
+        console.log('Prima di creare la unit, fRiferimenti è: ', fRiferimenti);
         let appuntamenti = this.createDeadlinesArray(fetchedDeadlines);
         console.log('Today: ', today);
         myUnit = new UnitComponent(
           null,
-          form.value.riferimenti,
-          form.value.libro,
-          form.value.chapterFrom,
-          form.value.chapterTo,
+          fRiferimenti,
+          fLibro,
+          fChapterFrom,
+          fChapterTo,
           today,
           appuntamenti,
-          form.value.notes,
+          fNotes,
           questions,
           false
-        )
+        );
+        console.log('Alla creazione, myUnit: ', myUnit);
       }),
       switchMap(res => { return this.authService.userId }),
       take(1),

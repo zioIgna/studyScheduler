@@ -15,7 +15,7 @@ export class EditBookComponent implements OnInit {
 
   constructor(private modalCtrl: ModalController) { }
 
-  onCreateBook() {
+  onEditBook() {
     if (!this.form.valid) {
       return;
     }
@@ -24,7 +24,7 @@ export class EditBookComponent implements OnInit {
         titolo: this.form.value['title'],
         autore: this.form.value['autore'],
         pagine: +this.form.value['pagine'],
-        isArchived: false
+        isArchived: this.book.isArchived
       }
     })
   }
