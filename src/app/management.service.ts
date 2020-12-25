@@ -517,7 +517,7 @@ export class ManagementService implements OnInit {
         return this.http.delete(`https://study-planner-w-authentication.firebaseio.com/users/${fetchedUserId}/units/${myUnit.id}.json?auth=${fetchedToken}`);
       }),
       tap((res) => {
-        console.log('la risposta dopo lo update è: ', res);
+        console.log('la risposta dopo la delete è: ', res);
         updatedUnits = updatedUnits.filter(unit => unit.id != myUnit.id);
         this._unitlist.next(updatedUnits);
       })
