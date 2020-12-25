@@ -31,14 +31,25 @@
           <h2><b>{{unit?.libro}}</b></h2>
         </ion-label>
       </ion-item>
-      <p *ngIf="unit?.nextDate">nextDate: {{unit?.nextDate.giorno | date}}</p>
+      <p *ngIf="unit?.nextDate"><ion-icon name="calendar" color="primary"></ion-icon><i> Next Date: </i>{{unit?.nextDate.giorno | date}}</p>
       <!-- <div *ngIf="unit.nextDate == undefined"> -->
-      <p *ngFor="let date of unit?.appuntamenti" (click)="onSwitchStatus(date.giorno)">{{ date.giorno | date }},
+        <ion-grid class="ion-no-padding lat-border" *ngFor="let date of unit?.appuntamenti">
+          <ion-row (click)="onSwitchStatus(date.giorno)">
+            <ion-col size="6" class="ion-no-padding">
+              <p class="left-margin">{{ date.giorno | date }}</p>
+            </ion-col>
+            <ion-col class="ion-no-padding">
+              <p><ion-badge [color]="date.status == 'DUE' ? 'secondary' : date.status == 'OVERDUE' ? 'danger' : 'primary'">.
+              </ion-badge> {{date.status }}</p>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      <!-- <p *ngFor="let date of unit?.appuntamenti" (click)="onSwitchStatus(date.giorno)">{{ date.giorno | date }},
         {{date.status }}
         <ion-badge slot="end"
           [color]="date.status == 'DUE' ? 'secondary' : date.status == 'OVERDUE' ? 'danger' : 'primary'">.
         </ion-badge>
-      </p>
+      </p> -->
       <p *ngIf="unit?.overdueDates">You have one or more overdue dates pending...</p>
       <p *ngIf="!unit?.overdueDates && !unit?.nextDate">Task completed!</p>
       <!-- </div> -->
