@@ -9,7 +9,6 @@ import { BehaviorSubject, Observable, of, from, Subscription } from 'rxjs';
 import { take, map, tap, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
-import { today } from './globals';
 import { UnitsData } from './units-data';
 import { IBookData } from './ibook-data';
 import { AuthenticationService } from './auth/authentication.service';
@@ -24,6 +23,7 @@ export class ManagementService implements OnInit {
 
   private _books = new BehaviorSubject<Book[]>([]);
   private userId: string;
+  readonly today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12, 0, 0, 0);
 
   get books() {
     return this._books.asObservable();
@@ -127,8 +127,8 @@ export class ManagementService implements OnInit {
 
   createDeadlinesArray(values: number[], creationDate?: Date) {
     let refDate: Date;
-    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12, 0, 0, 0);
-    refDate = creationDate ? creationDate : today;
+    // const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12, 0, 0, 0);
+    refDate = creationDate ? creationDate : this.today;
     let appuntamenti: Scadenza[] = [];
     values.forEach(value => {
       const newDeadline = new Date(refDate.getTime() + 1000 * 60 * 60 * 24 * value);
@@ -156,14 +156,13 @@ export class ManagementService implements OnInit {
       tap(res => {
         console.log('Prima di creare la unit, fRiferimenti è: ', fRiferimenti);
         let appuntamenti = this.createDeadlinesArray(fetchedDeadlines);
-        console.log('Today: ', today);
         myUnit = new UnitComponent(
           null,
           fRiferimenti,
           fLibro,
           fChapterFrom,
           fChapterTo,
-          today,
+          this.today,
           appuntamenti,
           fNotes,
           questions,
@@ -379,11 +378,9 @@ export class ManagementService implements OnInit {
           if (resData.hasOwnProperty(key)) {
             let myAppuntamenti: Scadenza[] = [];
             for (let appuntamento of resData[key].appuntamenti) {
-              let today = new Date();
-              today.setHours(12, 0, 0, 0);
-              // if (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getDate(), today.getMonth(), today.getDate()) < 0)
-              // if (new Date(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate(), 12) < new Date(today.getDate(), today.getMonth(), today.getDate(), 12))
-              if (appuntamento.giorno < today) {
+              // let today = new Date();
+              // today.setHours(12, 0, 0, 0);
+              if (appuntamento.giorno < this.today) {
                 appuntamento.status = DeadlineStatus.Overdue;
               }
               myAppuntamenti.push(new Scadenza(new Date(appuntamento.giorno), appuntamento.status));

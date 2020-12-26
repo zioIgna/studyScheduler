@@ -62,26 +62,15 @@ export class UnitDetailPage implements OnInit, OnDestroy {
     });
   }
 
-  onEditCard() {
-    // this.router.navigateByUrl('')
-  }
-
   pastDate(date1: Date): boolean {
     let today = new Date();
     today.setHours(12, 0, 0, 0);
-    // let newDate1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
-    // let newDate2 = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-    // return (newDate1 - newDate2) < 0;
     date1.setHours(12, 0, 0, 0);
     return date1 < today;
   }
 
   sameDay(date1: Date): boolean {
     let today = new Date();
-    // let newDate1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
-    // let newDate2 = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-    // var ms = Math.abs(newDate1 - newDate2);
-    // return Math.floor(ms / 1000 / 60 / 60 / 24) == 0;
     today.setHours(12, 0, 0, 0);
     date1.setHours(12, 0, 0, 0);
     return today.getTime() == date1.getTime();

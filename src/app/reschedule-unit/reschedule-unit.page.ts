@@ -16,6 +16,7 @@ export class RescheduleUnitPage implements OnInit {
   unitId: string;
   selectedValue: number;
   newDateStr: string;
+  readonly today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12, 0, 0, 0);
   // minimunDate = Date();
   // minimumYear: number;
 
@@ -70,14 +71,13 @@ export class RescheduleUnitPage implements OnInit {
       this.showAlert(message);
       console.log('La nuova data non è valida', newDate);
     } else {
-      let today = new Date();
       let daysDiff = (newDate.getTime() - shiftingDate.getTime()) / (1000 * 3600 * 24);
       for (let i = this.selectedValue; i < this.unit.appuntamenti.length; i++) {
         let currDate = this.unit.appuntamenti[i].giorno;
         let updDate = this.addDays(currDate, daysDiff);
         this.unit.appuntamenti[i].giorno = updDate;
         console.log('valore del nuovo appuntamento: ', this.unit.appuntamenti[i].giorno);
-        if(updDate > today){
+        if(updDate > this.today){
           this.unit.appuntamenti[i].status = DeadlineStatus.Due;
           console.log('status del nuovo appuntamento: ', this.unit.appuntamenti[i].status);
         }

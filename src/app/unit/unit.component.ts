@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Scadenza } from '../scadenza.model';
 import { DeadlineStatus } from '../deadlineStatus.model';
 import { Question } from '../question.model';
-import { today } from '../globals';
 
 @Component({
   selector: 'app-unit',
@@ -26,12 +25,11 @@ export class UnitComponent {
     public questions: Question[],
     public isArchived: boolean
   ) {
+    const today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 12, 0, 0, 0);
     this.nextDate = appuntamenti.find(function (appuntamento) {
-      // return (Date.UTC(new Date(appuntamento.giorno).getFullYear(), new Date(appuntamento.giorno).getMonth(), new Date(appuntamento.giorno).getDate()) - Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())) >= 0;
       return (new Date(appuntamento.giorno) >= today);
     });
     this.pastDates = appuntamenti.filter(app =>
-      // Date.UTC(new Date(app.giorno).getFullYear(), new Date(app.giorno).getMonth(), new Date(app.giorno).getDate()) < Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())
       new Date(app.giorno) < today
     );
     for (let pastDate of this.pastDates) {
