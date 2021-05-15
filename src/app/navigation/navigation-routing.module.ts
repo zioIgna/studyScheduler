@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from "../auth/auth.guard";
 import { NavigationPage } from './navigation.page';
 // import { ArgomentiPageModule } from '../argomenti/argomenti.module';
 // import { CalendarioPageModule } from '../calendario/calendario.module';
@@ -16,7 +17,8 @@ const routes: Routes = [
                         [
                             {
                                 path: '',
-                                loadChildren: '../argomenti/argomenti.module#ArgomentiPageModule'
+                                loadChildren: '../argomenti/argomenti.module#ArgomentiPageModule',
+                                // canLoad: [AuthGuard]
                             },
                             {
                                 // path: ':unitName',
@@ -34,10 +36,12 @@ const routes: Routes = [
                                         {
                                             path: '',
                                             // redirectTo: '/navigation/tabs/args/:unitName',
-                                            loadChildren: '../unit-detail/unit-detail.module#UnitDetailPageModule'
+                                            loadChildren: '../unit-detail/unit-detail.module#UnitDetailPageModule',
+                                            canLoad: [AuthGuard]
                                             // pathMatch: 'full'
                                         }
-                                    ]
+                                    ],
+                                // canLoad: [AuthGuard]
                             }
                         ]
                 },
@@ -47,7 +51,8 @@ const routes: Routes = [
                         [
                             {
                                 path: '',
-                                loadChildren: '../calendario/calendario.module#CalendarioPageModule'
+                                loadChildren: '../calendario/calendario.module#CalendarioPageModule',
+                                // canLoad: [AuthGuard]
                             }
                         ]
                 },
